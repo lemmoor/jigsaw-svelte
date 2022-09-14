@@ -1,9 +1,18 @@
 <script>
+  import Jigsaw from './lib/Jigsaw.svelte'
   let jigsawSrc;
-  
+  let gameStart = false;
+  let JigsawImg;
+
+  function startGame () {
+    if(jigsawSrc){
+      gameStart = true;
+      JigsawImg.style.display = "none";
+    }
+  }
 </script>
 
-<main>
+<main class="container">
   <h1>Create your own jigsaw!</h1>
   <form>
     <label for="img">Select image:</label>
@@ -17,11 +26,18 @@
       console.log(jigsawSrc)
     }}>
   </form>
-  <button on:click = {() => jigsawSrc = "https://picsum.photos/200/300"}>Solve random image</button>
+  <button on:click = {() => jigsawSrc = "https://picsum.photos/500?random="+ Math.floor(Math.random() * 1000)}>Solve random image</button>
   {#if (jigsawSrc)}
-  <img src={jigsawSrc} alt="puzzle" width="400px">
+    <img src={jigsawSrc} bind:this={JigsawImg} alt="puzzle" width="700px">
+  {/if}
+  <button on:click={startGame}>Start</button>
+  {#if (gameStart)}
+    <Jigsaw img={JigsawImg}/>
   {/if}
 </main>
 
 <style>
+ main {
+  margin-bottom: 2rem;
+ }
 </style>
