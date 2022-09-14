@@ -22,8 +22,8 @@
         }
 
         draw (ctx) {
-            let w = img.naturalWidth/rows;
-            let h = img.naturalHeight/cols;
+            let w = img.naturalWidth/cols;
+            let h = img.naturalHeight/rows;
             ctx.drawImage(img, this.i * w, this.j * h, w, h,
                             this.currentPos.x, this.currentPos.y, this.width, this.height);
             ctx.beginPath();
@@ -37,15 +37,24 @@
 
     }
 
+    function randomisePuzzles (p, maxX, maxY) {
+        for(let i = 0; i < p.length; i++){
+            p[i].currentPos.x = Math.floor(Math.random() * maxX);
+            p[i].currentPos.y = Math.floor(Math.random() * maxY);
+        }
+    }
+
     const setup = ({ context, width, height }) => {
-        for(let i = 0; i < rows; i++){
-            for(let j = 0; j < cols; j++){
+        for(let i = 0; i < cols; i++){
+            for(let j = 0; j < rows; j++){
                 let positionX = (width/2 - imgW/2) + (i * imgW/cols);
                 let positionY = (height/2 - imgH/2) + (j * imgH/rows);
                 let p = new Puzzle(i, j, {x: positionX, y: positionY}, {x: positionX, y: positionY});
                 puzzlePieces.push(p);
             }
         }
+
+        randomisePuzzles(puzzlePieces, width - imgW/cols, height - imgH/rows);
 	}
 
     $: render = ({ context, width, height }) => {
@@ -56,9 +65,8 @@
         for(let i = 0; i < puzzlePieces.length; i++){
             puzzlePieces[i].draw(context);
         }
-        puzzlePieces[0].currentPos.x = 0;
-        puzzlePieces[0].draw(context)
-  };
+
+    };
 </script>
 
 <Canvas width={920} height={920} style="border: 1px solid black;">
