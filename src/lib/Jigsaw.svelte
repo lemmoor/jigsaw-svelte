@@ -10,6 +10,8 @@
     const imgW = resize * img.naturalWidth;
     const imgH = resize * img.naturalHeight;
     let puzzlePieces = [];
+    let movingPuzzleOffset;
+    let movingPuzzle;
 
     class Puzzle {
         constructor(i,  j, correctPos, currentPos) {
@@ -19,6 +21,7 @@
           this.j = j;
           this.correctPos = correctPos;
           this.currentPos = currentPos;
+          this.path = null;
         }
 
         draw (ctx) {
@@ -26,13 +29,14 @@
             let h = img.naturalHeight/rows;
             ctx.drawImage(img, this.i * w, this.j * h, w, h,
                             this.currentPos.x, this.currentPos.y, this.width, this.height);
-            ctx.beginPath();
-            ctx.moveTo(this.currentPos.x, this.currentPos.y);
-            ctx.lineTo(this.currentPos.x +this.width, this.currentPos.y);
-            ctx.lineTo(this.currentPos.x +this.width, this.currentPos.y + this.height);
-            ctx.lineTo(this.currentPos.x, this.currentPos.y + this.height);
-            ctx.closePath();
-            ctx.stroke();
+            this.path = new Path2D();
+            // ctx.beginPath();
+            this.path.moveTo(this.currentPos.x, this.currentPos.y);
+            this.path.lineTo(this.currentPos.x +this.width, this.currentPos.y);
+            this.path.lineTo(this.currentPos.x +this.width, this.currentPos.y + this.height);
+            this.path.lineTo(this.currentPos.x, this.currentPos.y + this.height);
+            this.path.closePath();
+            ctx.stroke(this.path);
         }
 
     }
@@ -42,9 +46,38 @@
             p[i].currentPos.x = Math.floor(Math.random() * maxX);
             p[i].currentPos.y = Math.floor(Math.random() * maxY);
         }
+    }  
+
+    let ctx;
+    function handleMousedown (x, y) {
+        for(let i = puzzlePieces.length - 1; i >=0; i--){
+            if(ctx.isPointInPath(puzzlePieces[i].path, x, y)){
+                movingPuzzle = puzzlePieces[i];
+                break;
+            }
+        }
+        if(movingPuzzle){
+            movingPuzzleOffset = {x: (x - movingPuzzle.currentPos.x), y: (y - movingPuzzle.currentPos.y)}
+            let first = puzzlePieces.splice(puzzlePieces.findIndex((p) => p.j == movingPuzzle.j && p.i == movingPuzzle.i), 1);
+            puzzlePieces.push(first[0]);
+            puzzlePieces = puzzlePieces;
+        }
+    }
+
+    function handleMousemove (x, y) {
+        if(movingPuzzleOffset){
+            // if(movingPuzzle && movingPuzzleOffset){
+                movingPuzzle.currentPos.x = x - movingPuzzleOffset.x;
+                movingPuzzle.currentPos.y = y - movingPuzzleOffset.y;
+                puzzlePieces = puzzlePieces;
+            // }
+            
+        }
     }
 
     const setup = ({ context, width, height }) => {
+        //there has to be a better way but idk
+        ctx = context;
         for(let i = 0; i < cols; i++){
             for(let j = 0; j < rows; j++){
                 let positionX = (width/2 - imgW/2) + (i * imgW/cols);
@@ -55,6 +88,7 @@
         }
 
         randomisePuzzles(puzzlePieces, width - imgW/cols, height - imgH/rows);
+
 	}
 
     $: render = ({ context, width, height }) => {
@@ -69,7 +103,10 @@
     };
 </script>
 
-<Canvas width={920} height={920} style="border: 1px solid black;">
+<Canvas width={920} height={920} style="border: 1px solid black;" 
+    on:mousedown={(e) => { handleMousedown(e.offsetX, e.offsetY)}}
+    on:mousemove={(e) => {handleMousemove(e.offsetX, e.offsetY);}}
+    on:mouseup={() => {movingPuzzleOffset = null; movingPuzzle = null;}}>
     <Layer {render} {setup}/>
 </Canvas>
 
