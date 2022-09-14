@@ -1,7 +1,9 @@
 Puzzle app.
 
 - [X] load an image or get an image from somewhere else (lorem picsum?)
-- [ ] split the image into pieces, canvas
+- [X] split the image into pieces, canvas
+- [ ] make them look like puzzle pieces and not just rectangles
+- [ ] recalculate `resize` and all related variables when getting a new image. Or hide the ability to do that? 
 - [ ] drag and drop to solve
 - [ ] toggle original image overlay or draggable popup with the image. Or both.
 - [ ] save progress in local storage
