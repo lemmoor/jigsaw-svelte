@@ -58,24 +58,39 @@
         }
         if(movingPuzzle){
             movingPuzzleOffset = {x: (x - movingPuzzle.currentPos.x), y: (y - movingPuzzle.currentPos.y)}
-            let first = puzzlePieces.splice(puzzlePieces.findIndex((p) => p.j == movingPuzzle.j && p.i == movingPuzzle.i), 1);
-            puzzlePieces.push(first[0]);
+            let piece = puzzlePieces.splice(puzzlePieces.findIndex((p) => p.j == movingPuzzle.j && p.i == movingPuzzle.i), 1);
+            puzzlePieces.push(piece[0]);
             puzzlePieces = puzzlePieces;
         }
     }
 
     function handleMousemove (x, y) {
         if(movingPuzzleOffset){
-            // if(movingPuzzle && movingPuzzleOffset){
-                movingPuzzle.currentPos.x = x - movingPuzzleOffset.x;
-                movingPuzzle.currentPos.y = y - movingPuzzleOffset.y;
+            movingPuzzle.currentPos.x = x - movingPuzzleOffset.x;
+            movingPuzzle.currentPos.y = y - movingPuzzleOffset.y;
+            puzzlePieces = puzzlePieces;
+        }
+    }
+
+    function handleMouseup () {
+        if(movingPuzzle){
+            let distThreshold = 30;
+            if(Math.abs(movingPuzzle.currentPos.x - movingPuzzle.correctPos.x) < distThreshold 
+            && Math.abs(movingPuzzle.currentPos.y - movingPuzzle.correctPos.y) < distThreshold){
+                movingPuzzle.currentPos.x = movingPuzzle.correctPos.x;
+                movingPuzzle.currentPos.y = movingPuzzle.correctPos.y;
+                //make puzzles underneath be on top of the correct placed one
+                let piece = puzzlePieces.splice(puzzlePieces.findIndex((p) => p.j == movingPuzzle.j && p.i == movingPuzzle.i), 1);
+                puzzlePieces.unshift(piece[0]);
                 puzzlePieces = puzzlePieces;
-            // }
-            
+            }
+            movingPuzzleOffset = null;
+            movingPuzzle = null;
         }
     }
 
     const setup = ({ context, width, height }) => {
+        context.strokeStyle = '#00000000';
         //there has to be a better way but idk
         ctx = context;
         for(let i = 0; i < cols; i++){
@@ -106,7 +121,7 @@
 <Canvas width={920} height={920} style="border: 1px solid black;" 
     on:mousedown={(e) => { handleMousedown(e.offsetX, e.offsetY)}}
     on:mousemove={(e) => {handleMousemove(e.offsetX, e.offsetY);}}
-    on:mouseup={() => {movingPuzzleOffset = null; movingPuzzle = null;}}>
+    on:mouseup={() => {handleMouseup()}}>
     <Layer {render} {setup}/>
 </Canvas>
 
