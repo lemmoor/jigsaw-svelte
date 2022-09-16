@@ -2,9 +2,9 @@
 // @ts-nocheck
     import { Canvas, Layer, t } from "svelte-canvas";
     export let img;
-    const rows = 3;
+    const rows = 4;
     const cols = 3;
-    const scale = 0.8;
+    const scale = 0.6;
     // 920 - canvas size. 
     const resize = scale * Math.min(920/img.naturalWidth, 920/img.naturalHeight);
     const imgW = resize * img.naturalWidth;
@@ -22,6 +22,7 @@
           this.correctPos = correctPos;
           this.currentPos = currentPos;
           this.path = null;
+          this.shape = {};
         }
 
         draw (ctx) {
@@ -84,15 +85,17 @@
                 puzzlePieces.unshift(piece[0]);
                 puzzlePieces = puzzlePieces;
             }
+            console.log(movingPuzzle)
             movingPuzzleOffset = null;
             movingPuzzle = null;
         }
     }
 
     const setup = ({ context, width, height }) => {
-        context.strokeStyle = '#00000000';
+        // context.strokeStyle = '#000000';
         //there has to be a better way but idk
         ctx = context;
+        //generate puzzles
         for(let i = 0; i < cols; i++){
             for(let j = 0; j < rows; j++){
                 let positionX = (width/2 - imgW/2) + (i * imgW/cols);
@@ -102,7 +105,51 @@
             }
         }
 
-        randomisePuzzles(puzzlePieces, width - imgW/cols, height - imgH/rows);
+        //which piece in the grid it is
+        let count = 0;
+        for(let i = 0; i < cols; i++){
+            for(let j = 0; j < rows; j++){
+                //in case i ever find the place where i and j switched. (i should be row, j - col).
+                let row = j;
+                let col = i;
+
+                let p = puzzlePieces[count]
+                // console.log(p, 'r: ', row, 'c:', col, count)
+                if(row == rows-1){
+                    p.shape.bottom = null;
+                }
+                else {
+                    let hasTab = (Math.random() - 0.5) < 0 ? -1 : 1;
+                    p.shape.bottom = hasTab * (Math.random() * 0.4 + 0.3);
+                }
+
+                if(col == cols-1){
+                    p.shape.right = null;
+                }
+                else {
+                    let hasTab = (Math.random() - 0.5) < 0 ? -1 : 1;
+                    p.shape.right = hasTab * (Math.random() * 0.4 + 0.3);
+                }
+
+                if(row == 0){
+                    p.shape.top = null;
+                }
+                else {
+                    p.shape.top = -(puzzlePieces[count - 1].shape.bottom);
+                }
+
+                if(col == 0){
+                    p.shape.left = null;
+                }
+                else {
+                    p.shape.left = -(puzzlePieces[count - rows].shape.right);
+                }
+                count++;
+            }
+        }
+
+        // console.log(puzzlePieces)
+        // randomisePuzzles(puzzlePieces, width - imgW/cols, height - imgH/rows);
 
 	}
 
