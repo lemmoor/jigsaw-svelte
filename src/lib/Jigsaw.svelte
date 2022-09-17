@@ -2,8 +2,8 @@
 // @ts-nocheck
     import { Canvas, Layer, t } from "svelte-canvas";
     export let img;
-    const rows = 4;
-    const cols = 3;
+    const rows = 5;
+    const cols = 5;
     const scale = 0.6;
     // 920 - canvas size. 
     const resize = scale * Math.min(920/img.naturalWidth, 920/img.naturalHeight);
@@ -26,17 +26,108 @@
         }
 
         draw (ctx) {
+            const size = Math.min(this.width, this.height);
+            const tabBase = 0.08 * size;
+            const tabWidth = 0.2 * size;
+            const tabHeight = 0.2 * size;
+            
+            this.path = new Path2D();
+            this.path.moveTo(this.currentPos.x, this.currentPos.y);
+            //top right
+            if(this.shape.top)
+            {
+                this.path.lineTo(this.currentPos.x + this.width * Math.abs(this.shape.top) - tabBase, this.currentPos.y)
+                this.path.bezierCurveTo(
+                    this.currentPos.x + this.width * Math.abs(this.shape.top) - tabBase,
+                    this.currentPos.y - tabHeight * Math.sign(this.shape.top) * 0.2,
+                    this.currentPos.x + this.width * Math.abs(this.shape.top) - tabWidth,
+                    this.currentPos.y - tabHeight * Math.sign(this.shape.top),
+                    this.currentPos.x + this.width * Math.abs(this.shape.top), 
+                    this.currentPos.y - tabHeight * Math.sign(this.shape.top)
+                )
+                this.path.bezierCurveTo(
+                    this.currentPos.x + this.width * Math.abs(this.shape.top) + tabWidth,
+                    this.currentPos.y - tabHeight * Math.sign(this.shape.top),
+                    this.currentPos.x + this.width * Math.abs(this.shape.top) + tabBase,
+                    this.currentPos.y - tabHeight * Math.sign(this.shape.top) * 0.2,
+                    this.currentPos.x + this.width * Math.abs(this.shape.top) + tabBase, 
+                    this.currentPos.y
+                )
+            }
+            this.path.lineTo(this.currentPos.x + this.width, this.currentPos.y);
+            //bottom right
+            if(this.shape.right){
+                this.path.lineTo(this.currentPos.x + this.width, this.currentPos.y + this.height * Math.abs(this.shape.right) - tabBase);
+                this.path.bezierCurveTo(
+                    this.currentPos.x + this.width - tabHeight * Math.sign(this.shape.right) * 0.2,
+                    this.currentPos.y + this.height * Math.abs(this.shape.right) - tabBase,
+                    this.currentPos.x + this.width - tabHeight * Math.sign(this.shape.right),
+                    this.currentPos.y + this.height * Math.abs(this.shape.right) - tabWidth,
+                    this.currentPos.x + this.width - tabHeight * Math.sign(this.shape.right),
+                    this.currentPos.y + this.height * Math.abs(this.shape.right)
+                )
+                this.path.bezierCurveTo(
+                    this.currentPos.x + this.width - tabHeight * Math.sign(this.shape.right),
+                    this.currentPos.y + this.height * Math.abs(this.shape.right) + tabWidth,
+                    this.currentPos.x + this.width - tabHeight * Math.sign(this.shape.right) * 0.2,
+                    this.currentPos.y + this.height * Math.abs(this.shape.right) + tabBase,
+                    this.currentPos.x + this.width,
+                    this.currentPos.y + this.height * Math.abs(this.shape.right) + tabBase
+                )
+            }
+            this.path.lineTo(this.currentPos.x + this.width, this.currentPos.y + this.height);
+            //bottom left
+            if(this.shape.bottom){
+                this.path.lineTo(this.currentPos.x + this.width * Math.abs(this.shape.bottom) + tabBase, this.currentPos.y + this.height)
+                this.path.bezierCurveTo(
+                    this.currentPos.x + this.width * Math.abs(this.shape.bottom) + tabBase,
+                    this.currentPos.y + this.height + tabHeight * Math.sign(this.shape.bottom) * 0.2,
+                    this.currentPos.x + this.width * Math.abs(this.shape.bottom) + tabWidth,
+                    this.currentPos.y + this.height + tabHeight * Math.sign(this.shape.bottom),
+                    this.currentPos.x + this.width * Math.abs(this.shape.bottom),
+                    this.currentPos.y + this.height + tabHeight * Math.sign(this.shape.bottom)
+                )
+                this.path.bezierCurveTo(
+                    this.currentPos.x + this.width * Math.abs(this.shape.bottom) - tabWidth,
+                    this.currentPos.y + this.height + tabHeight * Math.sign(this.shape.bottom),
+                    this.currentPos.x + this.width * Math.abs(this.shape.bottom) - tabBase,
+                    this.currentPos.y + this.height + tabHeight * Math.sign(this.shape.bottom) * 0.2,
+                    this.currentPos.x + this.width * Math.abs(this.shape.bottom) - tabBase,
+                    this.currentPos.y + this.height
+                )
+            }
+            this.path.lineTo(this.currentPos.x, this.currentPos.y + this.height);
+            //top left
+            if(this.shape.left){
+                this.path.lineTo(this.currentPos.x, this.currentPos.y + this.height * Math.abs(this.shape.left) + tabBase);
+                this.path.bezierCurveTo(
+                    this.currentPos.x + tabHeight * Math.sign(this.shape.left) * 0.2,
+                    this.currentPos.y + this.height * Math.abs(this.shape.left) + tabBase,
+                    this.currentPos.x + tabHeight * Math.sign(this.shape.left),
+                    this.currentPos.y + this.height * Math.abs(this.shape.left) + tabWidth,
+                    this.currentPos.x + tabHeight * Math.sign(this.shape.left),
+                    this.currentPos.y + this.height * Math.abs(this.shape.left)
+                )
+                this.path.bezierCurveTo(
+                    this.currentPos.x + tabHeight * Math.sign(this.shape.left),
+                    this.currentPos.y + this.height * Math.abs(this.shape.left) - tabWidth,
+                    this.currentPos.x + tabHeight * Math.sign(this.shape.left) * 0.2,
+                    this.currentPos.y + this.height * Math.abs(this.shape.left) - tabBase,
+                    this.currentPos.x,
+                    this.currentPos.y + this.height * Math.abs(this.shape.left) - tabBase
+                )
+            }
+            this.path.lineTo(this.currentPos.x, this.currentPos.y);
+
+            ctx.save();
+            ctx.clip(this.path);
             let w = img.naturalWidth/cols;
             let h = img.naturalHeight/rows;
-            ctx.drawImage(img, this.i * w, this.j * h, w, h,
-                            this.currentPos.x, this.currentPos.y, this.width, this.height);
-            this.path = new Path2D();
-            // ctx.beginPath();
-            this.path.moveTo(this.currentPos.x, this.currentPos.y);
-            this.path.lineTo(this.currentPos.x +this.width, this.currentPos.y);
-            this.path.lineTo(this.currentPos.x +this.width, this.currentPos.y + this.height);
-            this.path.lineTo(this.currentPos.x, this.currentPos.y + this.height);
-            this.path.closePath();
+            let scaledTabH = Math.min(w, h) * tabHeight/size;
+            ctx.drawImage(img, this.i * w - scaledTabH, this.j * h - scaledTabH, w + scaledTabH*2, h + scaledTabH * 2,
+                            this.currentPos.x - tabHeight, this.currentPos.y - tabHeight, this.width + tabHeight*2, this.height + tabHeight * 2);
+
+            ctx.restore();
             ctx.stroke(this.path);
         }
 
@@ -85,7 +176,6 @@
                 puzzlePieces.unshift(piece[0]);
                 puzzlePieces = puzzlePieces;
             }
-            console.log(movingPuzzle)
             movingPuzzleOffset = null;
             movingPuzzle = null;
         }
@@ -148,8 +238,7 @@
             }
         }
 
-        // console.log(puzzlePieces)
-        // randomisePuzzles(puzzlePieces, width - imgW/cols, height - imgH/rows);
+        randomisePuzzles(puzzlePieces, width - imgW/cols, height - imgH/rows);
 
 	}
 
