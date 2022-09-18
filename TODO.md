@@ -4,7 +4,9 @@ Puzzle app.
 - [X] split the image into pieces, canvas
 - [X] drag and drop to solve
 - [X] check if piece is in correct location
-- [ ] make them look like puzzle pieces and not just rectangles
+- [X] make them look like puzzle pieces and not just rectangles
+- [ ] add mobile touch events
+- [ ] bug: when resizing canvas puzzle coords stay relative to previous size
 - [ ] recalculate `resize` and all related variables when getting a new image. Or hide the ability to do that? 
 - [ ] toggle original image overlay or draggable popup with the image. Or both.
 - [ ] save progress in local storage
