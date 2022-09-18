@@ -1,12 +1,14 @@
 <script>
 // @ts-nocheck
-    import { Canvas, Layer, t } from "svelte-canvas";
+    import { Canvas, Layer, t} from "svelte-canvas";
     export let img;
+    window.devicePixelRatio = 1;
     const rows = 5;
     const cols = 5;
-    const scale = 0.6;
-    // 920 - canvas size. 
-    const resize = scale * Math.min(920/img.naturalWidth, 920/img.naturalHeight);
+    const scale = 0.7 
+    let canvasWidth = window.innerWidth;
+    const canvasHeight = 1000;
+    const resize = scale * Math.min(canvasWidth/img.naturalWidth, canvasHeight/img.naturalHeight);
     const imgW = resize * img.naturalWidth;
     const imgH = resize * img.naturalHeight;
     let puzzlePieces = [];
@@ -30,7 +32,7 @@
             const tabBase = 0.08 * size;
             const tabWidth = 0.2 * size;
             const tabHeight = 0.2 * size;
-            
+
             this.path = new Path2D();
             this.path.moveTo(this.currentPos.x, this.currentPos.y);
             //top right
@@ -118,6 +120,7 @@
                 )
             }
             this.path.lineTo(this.currentPos.x, this.currentPos.y);
+            // this.path.closePath();
 
             ctx.save();
             ctx.clip(this.path);
@@ -140,11 +143,13 @@
         }
     }  
 
-    let ctx;
+    let canv;
     function handleMousedown (x, y) {
+        let ctx = canv.getContext();
         for(let i = puzzlePieces.length - 1; i >=0; i--){
             if(ctx.isPointInPath(puzzlePieces[i].path, x, y)){
                 movingPuzzle = puzzlePieces[i];
+                console.log("ipip:", ctx.isPointInPath(puzzlePieces[i].path, x, y), movingPuzzle, x, y)
                 break;
             }
         }
@@ -183,8 +188,6 @@
 
     const setup = ({ context, width, height }) => {
         // context.strokeStyle = '#000000';
-        //there has to be a better way but idk
-        ctx = context;
         //generate puzzles
         for(let i = 0; i < cols; i++){
             for(let j = 0; j < rows; j++){
@@ -238,7 +241,7 @@
             }
         }
 
-        randomisePuzzles(puzzlePieces, width - imgW/cols, height - imgH/rows);
+        // randomisePuzzles(puzzlePieces, width - imgW/cols, height - imgH/rows);
 
 	}
 
@@ -250,14 +253,16 @@
         for(let i = 0; i < puzzlePieces.length; i++){
             puzzlePieces[i].draw(context);
         }
-
     };
 </script>
 
-<Canvas width={920} height={920} style="border: 1px solid black;" 
-    on:mousedown={(e) => { handleMousedown(e.offsetX, e.offsetY)}}
-    on:mousemove={(e) => {handleMousemove(e.offsetX, e.offsetY);}}
-    on:mouseup={() => {handleMouseup()}}>
-    <Layer {render} {setup}/>
-</Canvas>
+<svelte:window bind:innerWidth={canvasWidth} />
+
+    <Canvas width={canvasWidth-50} height={canvasHeight} style="margin: 0 auto; border: 1px solid black" bind:this={canv}
+        on:mousedown={(e) => { handleMousedown(e.offsetX, e.offsetY)}}
+        on:mousemove={(e) => {handleMousemove(e.offsetX, e.offsetY);}}
+        on:mouseup={() => {handleMouseup()}}>
+        <Layer {render} {setup}/>
+    </Canvas>
+
 

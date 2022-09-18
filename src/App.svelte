@@ -31,10 +31,10 @@
     <img src={jigsawSrc} bind:this={JigsawImg} alt="puzzle" width="700px">
   {/if}
   <button on:click={startGame}>Start</button>
-  {#if (gameStart)}
-    <Jigsaw img={JigsawImg}/>
-  {/if}
 </main>
+{#if (gameStart)}
+<Jigsaw img={JigsawImg}/>
+{/if}
 
 <style>
  main {
