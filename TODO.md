@@ -6,7 +6,9 @@ Puzzle app.
 - [X] check if piece is in correct location
 - [X] make them look like puzzle pieces and not just rectangles
 - [ ] add mobile touch events
-- [ ] bug: when resizing canvas puzzle coords stay relative to previous size
+- [X] bug: when resizing canvas puzzle coords stay relative to previous size
+- [ ] move puzzlezthat went off screen after resize 
+- [ ] [mobile resize](https://developer.mozilla.org/en-US/docs/Web/API/ScreenOrientation)
 - [ ] recalculate `resize` and all related variables when getting a new image. Or hide the ability to do that? 
 - [ ] toggle original image overlay or draggable popup with the image. Or both.
 - [ ] save progress in local storage
