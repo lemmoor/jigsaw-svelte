@@ -3,14 +3,15 @@
     import { Canvas, Layer, t} from "svelte-canvas";
     export let img;
     window.devicePixelRatio = 1;
-    const rows = 5;
-    const cols = 5;
+    const rows = 10;
+    const cols = 10;
     const scale = 0.7 
     let canvasWidth = window.innerWidth;
     const canvasHeight = 1000;
     const resize = scale * Math.min(canvasWidth/img.naturalWidth, canvasHeight/img.naturalHeight);
     const imgW = resize * img.naturalWidth;
     const imgH = resize * img.naturalHeight;
+    let OffsetCenteredX = (canvasWidth - 50)/2 - imgW/2;
     let puzzlePieces = [];
     let movingPuzzleOffset;
     let movingPuzzle;
@@ -21,8 +22,8 @@
           this.height = imgH/rows;
           this.i = i;
           this.j = j;
-          this.correctPos = correctPos;
-          this.currentPos = currentPos;
+          this.correctPos = {x: correctPos.x, y: correctPos.y};
+          this.currentPos = {x: currentPos.x, y: currentPos.y};
           this.path = null;
           this.shape = {};
         }
@@ -32,94 +33,95 @@
             const tabBase = 0.08 * size;
             const tabWidth = 0.2 * size;
             const tabHeight = 0.2 * size;
+            let x = this.currentPos.x + OffsetCenteredX;
 
             this.path = new Path2D();
-            this.path.moveTo(this.currentPos.x, this.currentPos.y);
+            this.path.moveTo(x, this.currentPos.y);
             //top right
             if(this.shape.top)
             {
-                this.path.lineTo(this.currentPos.x + this.width * Math.abs(this.shape.top) - tabBase, this.currentPos.y)
+                this.path.lineTo(x + this.width * Math.abs(this.shape.top) - tabBase, this.currentPos.y)
                 this.path.bezierCurveTo(
-                    this.currentPos.x + this.width * Math.abs(this.shape.top) - tabBase,
+                    x + this.width * Math.abs(this.shape.top) - tabBase,
                     this.currentPos.y - tabHeight * Math.sign(this.shape.top) * 0.2,
-                    this.currentPos.x + this.width * Math.abs(this.shape.top) - tabWidth,
+                    x + this.width * Math.abs(this.shape.top) - tabWidth,
                     this.currentPos.y - tabHeight * Math.sign(this.shape.top),
-                    this.currentPos.x + this.width * Math.abs(this.shape.top), 
+                    x + this.width * Math.abs(this.shape.top), 
                     this.currentPos.y - tabHeight * Math.sign(this.shape.top)
                 )
                 this.path.bezierCurveTo(
-                    this.currentPos.x + this.width * Math.abs(this.shape.top) + tabWidth,
+                    x + this.width * Math.abs(this.shape.top) + tabWidth,
                     this.currentPos.y - tabHeight * Math.sign(this.shape.top),
-                    this.currentPos.x + this.width * Math.abs(this.shape.top) + tabBase,
+                    x + this.width * Math.abs(this.shape.top) + tabBase,
                     this.currentPos.y - tabHeight * Math.sign(this.shape.top) * 0.2,
-                    this.currentPos.x + this.width * Math.abs(this.shape.top) + tabBase, 
+                    x + this.width * Math.abs(this.shape.top) + tabBase, 
                     this.currentPos.y
                 )
             }
-            this.path.lineTo(this.currentPos.x + this.width, this.currentPos.y);
+            this.path.lineTo(x + this.width, this.currentPos.y);
             //bottom right
             if(this.shape.right){
-                this.path.lineTo(this.currentPos.x + this.width, this.currentPos.y + this.height * Math.abs(this.shape.right) - tabBase);
+                this.path.lineTo(x + this.width, this.currentPos.y + this.height * Math.abs(this.shape.right) - tabBase);
                 this.path.bezierCurveTo(
-                    this.currentPos.x + this.width - tabHeight * Math.sign(this.shape.right) * 0.2,
+                    x + this.width - tabHeight * Math.sign(this.shape.right) * 0.2,
                     this.currentPos.y + this.height * Math.abs(this.shape.right) - tabBase,
-                    this.currentPos.x + this.width - tabHeight * Math.sign(this.shape.right),
+                    x + this.width - tabHeight * Math.sign(this.shape.right),
                     this.currentPos.y + this.height * Math.abs(this.shape.right) - tabWidth,
-                    this.currentPos.x + this.width - tabHeight * Math.sign(this.shape.right),
+                    x + this.width - tabHeight * Math.sign(this.shape.right),
                     this.currentPos.y + this.height * Math.abs(this.shape.right)
                 )
                 this.path.bezierCurveTo(
-                    this.currentPos.x + this.width - tabHeight * Math.sign(this.shape.right),
+                    x + this.width - tabHeight * Math.sign(this.shape.right),
                     this.currentPos.y + this.height * Math.abs(this.shape.right) + tabWidth,
-                    this.currentPos.x + this.width - tabHeight * Math.sign(this.shape.right) * 0.2,
+                    x + this.width - tabHeight * Math.sign(this.shape.right) * 0.2,
                     this.currentPos.y + this.height * Math.abs(this.shape.right) + tabBase,
-                    this.currentPos.x + this.width,
+                    x + this.width,
                     this.currentPos.y + this.height * Math.abs(this.shape.right) + tabBase
                 )
             }
-            this.path.lineTo(this.currentPos.x + this.width, this.currentPos.y + this.height);
+            this.path.lineTo(x + this.width, this.currentPos.y + this.height);
             //bottom left
             if(this.shape.bottom){
-                this.path.lineTo(this.currentPos.x + this.width * Math.abs(this.shape.bottom) + tabBase, this.currentPos.y + this.height)
+                this.path.lineTo(x + this.width * Math.abs(this.shape.bottom) + tabBase, this.currentPos.y + this.height)
                 this.path.bezierCurveTo(
-                    this.currentPos.x + this.width * Math.abs(this.shape.bottom) + tabBase,
+                    x + this.width * Math.abs(this.shape.bottom) + tabBase,
                     this.currentPos.y + this.height + tabHeight * Math.sign(this.shape.bottom) * 0.2,
-                    this.currentPos.x + this.width * Math.abs(this.shape.bottom) + tabWidth,
+                    x + this.width * Math.abs(this.shape.bottom) + tabWidth,
                     this.currentPos.y + this.height + tabHeight * Math.sign(this.shape.bottom),
-                    this.currentPos.x + this.width * Math.abs(this.shape.bottom),
+                    x + this.width * Math.abs(this.shape.bottom),
                     this.currentPos.y + this.height + tabHeight * Math.sign(this.shape.bottom)
                 )
                 this.path.bezierCurveTo(
-                    this.currentPos.x + this.width * Math.abs(this.shape.bottom) - tabWidth,
+                    x + this.width * Math.abs(this.shape.bottom) - tabWidth,
                     this.currentPos.y + this.height + tabHeight * Math.sign(this.shape.bottom),
-                    this.currentPos.x + this.width * Math.abs(this.shape.bottom) - tabBase,
+                    x + this.width * Math.abs(this.shape.bottom) - tabBase,
                     this.currentPos.y + this.height + tabHeight * Math.sign(this.shape.bottom) * 0.2,
-                    this.currentPos.x + this.width * Math.abs(this.shape.bottom) - tabBase,
+                    x + this.width * Math.abs(this.shape.bottom) - tabBase,
                     this.currentPos.y + this.height
                 )
             }
-            this.path.lineTo(this.currentPos.x, this.currentPos.y + this.height);
+            this.path.lineTo(x, this.currentPos.y + this.height);
             //top left
             if(this.shape.left){
-                this.path.lineTo(this.currentPos.x, this.currentPos.y + this.height * Math.abs(this.shape.left) + tabBase);
+                this.path.lineTo(x, this.currentPos.y + this.height * Math.abs(this.shape.left) + tabBase);
                 this.path.bezierCurveTo(
-                    this.currentPos.x + tabHeight * Math.sign(this.shape.left) * 0.2,
+                    x + tabHeight * Math.sign(this.shape.left) * 0.2,
                     this.currentPos.y + this.height * Math.abs(this.shape.left) + tabBase,
-                    this.currentPos.x + tabHeight * Math.sign(this.shape.left),
+                    x + tabHeight * Math.sign(this.shape.left),
                     this.currentPos.y + this.height * Math.abs(this.shape.left) + tabWidth,
-                    this.currentPos.x + tabHeight * Math.sign(this.shape.left),
+                    x + tabHeight * Math.sign(this.shape.left),
                     this.currentPos.y + this.height * Math.abs(this.shape.left)
                 )
                 this.path.bezierCurveTo(
-                    this.currentPos.x + tabHeight * Math.sign(this.shape.left),
+                    x + tabHeight * Math.sign(this.shape.left),
                     this.currentPos.y + this.height * Math.abs(this.shape.left) - tabWidth,
-                    this.currentPos.x + tabHeight * Math.sign(this.shape.left) * 0.2,
+                    x + tabHeight * Math.sign(this.shape.left) * 0.2,
                     this.currentPos.y + this.height * Math.abs(this.shape.left) - tabBase,
-                    this.currentPos.x,
+                    x,
                     this.currentPos.y + this.height * Math.abs(this.shape.left) - tabBase
                 )
             }
-            this.path.lineTo(this.currentPos.x, this.currentPos.y);
+            this.path.lineTo(x, this.currentPos.y);
             // this.path.closePath();
 
             ctx.save();
@@ -128,7 +130,7 @@
             let h = img.naturalHeight/rows;
             let scaledTabH = Math.min(w, h) * tabHeight/size;
             ctx.drawImage(img, this.i * w - scaledTabH, this.j * h - scaledTabH, w + scaledTabH*2, h + scaledTabH * 2,
-                            this.currentPos.x - tabHeight, this.currentPos.y - tabHeight, this.width + tabHeight*2, this.height + tabHeight * 2);
+                            x - tabHeight, this.currentPos.y - tabHeight, this.width + tabHeight*2, this.height + tabHeight * 2);
 
             ctx.restore();
             ctx.stroke(this.path);
@@ -138,7 +140,7 @@
 
     function randomisePuzzles (p, maxX, maxY) {
         for(let i = 0; i < p.length; i++){
-            p[i].currentPos.x = Math.floor(Math.random() * maxX);
+            p[i].currentPos.x = Math.floor(Math.random() * maxX) - OffsetCenteredX;
             p[i].currentPos.y = Math.floor(Math.random() * maxY);
         }
     }  
@@ -154,7 +156,7 @@
             }
         }
         if(movingPuzzle){
-            movingPuzzleOffset = {x: (x - movingPuzzle.currentPos.x), y: (y - movingPuzzle.currentPos.y)}
+            movingPuzzleOffset = {x: (x - (movingPuzzle.currentPos.x)), y: (y - movingPuzzle.currentPos.y)}
             let piece = puzzlePieces.splice(puzzlePieces.findIndex((p) => p.j == movingPuzzle.j && p.i == movingPuzzle.i), 1);
             puzzlePieces.push(piece[0]);
             puzzlePieces = puzzlePieces;
@@ -186,12 +188,25 @@
         }
     }
 
+    function updateCoords(){
+        OffsetCenteredX = (canvasWidth - 50)/2 - imgW/2;
+        // randomisePuzzles(puzzlePieces, (canvasWidth - 50) - imgW/cols, canvasHeight - imgH/rows);
+        canv.redraw();
+    }
+
+    let resizeTimeout;
+    function handleResize () {
+        clearTimeout(resizeTimeout)
+        resizeTimeout = setTimeout(updateCoords, 100);
+    }
+
     const setup = ({ context, width, height }) => {
         // context.strokeStyle = '#000000';
         //generate puzzles
         for(let i = 0; i < cols; i++){
             for(let j = 0; j < rows; j++){
-                let positionX = (width/2 - imgW/2) + (i * imgW/cols);
+                // let positionX = (width/2 - imgW/2) + (i * imgW/cols);
+                let positionX = (i * imgW/cols);
                 let positionY = (height/2 - imgH/2) + (j * imgH/rows);
                 let p = new Puzzle(i, j, {x: positionX, y: positionY}, {x: positionX, y: positionY});
                 puzzlePieces.push(p);
@@ -256,13 +271,16 @@
     };
 </script>
 
-<svelte:window bind:innerWidth={canvasWidth} />
+<svelte:window bind:innerWidth={canvasWidth} on:resize={handleResize}/>
 
-    <Canvas width={canvasWidth-50} height={canvasHeight} style="margin: 0 auto; border: 1px solid black" bind:this={canv}
-        on:mousedown={(e) => { handleMousedown(e.offsetX, e.offsetY)}}
-        on:mousemove={(e) => {handleMousemove(e.offsetX, e.offsetY);}}
-        on:mouseup={() => {handleMouseup()}}>
-        <Layer {render} {setup}/>
-    </Canvas>
+<Canvas width={canvasWidth-50} height={canvasHeight} style="margin: 0 auto; border: 1px solid black" bind:this={canv}
+    on:mousedown={(e) => { handleMousedown(e.offsetX, e.offsetY)}}
+    on:mousemove={(e) => {handleMousemove(e.offsetX, e.offsetY)}}
+    on:mouseup={() => {handleMouseup()}}
+    on:touchstart={(e) => handleMousedown(e.touches[0].clientX, e.touches[0].clientY)}
+    on:touchmove ={(e) => {handleMousemove(e.touches[0].clientX, e.touches[0].clientY)}}
+    on:touchend={() => {handleMouseup()}}>
+    <Layer {render} {setup}/>
+</Canvas>
 
 
