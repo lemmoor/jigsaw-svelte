@@ -30,7 +30,7 @@ npm run dev
 ```
 
 ### Contributing
-You are welcome to contribute and improve this project, i made it a while ago to learn svelte. Feel free to open an issue/PR :)
+You are welcome to contribute and improve this project, I made it a while ago to learn svelte. Feel free to open an issue/PR :)
 
 ### License
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
