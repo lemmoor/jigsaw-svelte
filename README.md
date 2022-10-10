@@ -1,5 +1,6 @@
 # Jigsaw puzzle game
 A web app where you can solve a jigsaw puzzle with a random image or your own.
+[Live Demo](https://lemmoor.github.io/jigsaw-svelte/)
 
 ## Table of Contents
 - [Getting Started](#getting-started)
