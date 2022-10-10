@@ -3,15 +3,15 @@
     import { Canvas, Layer, t} from "svelte-canvas";
     export let img;
     window.devicePixelRatio = 1;
-    const rows = 10;
-    const cols = 10;
+    const rows = 5;
+    const cols = 5;
     const scale = 0.7 
     let canvasWidth = window.innerWidth;
     const canvasHeight = 1000;
     const resize = scale * Math.min(canvasWidth/img.naturalWidth, canvasHeight/img.naturalHeight);
     const imgW = resize * img.naturalWidth;
     const imgH = resize * img.naturalHeight;
-    let OffsetCenteredX = (canvasWidth - 50)/2 - imgW/2;
+    let OffsetCenteredX = (canvasWidth - 50)/2 - imgW/2; //x coords for a centered image
     let puzzlePieces = [];
     let movingPuzzleOffset;
     let movingPuzzle;
@@ -122,7 +122,6 @@
                 )
             }
             this.path.lineTo(x, this.currentPos.y);
-            // this.path.closePath();
 
             ctx.save();
             ctx.clip(this.path);
@@ -151,7 +150,6 @@
         for(let i = puzzlePieces.length - 1; i >=0; i--){
             if(ctx.isPointInPath(puzzlePieces[i].path, x, y)){
                 movingPuzzle = puzzlePieces[i];
-                console.log("ipip:", ctx.isPointInPath(puzzlePieces[i].path, x, y), movingPuzzle, x, y)
                 break;
             }
         }
@@ -205,7 +203,6 @@
         //generate puzzles
         for(let i = 0; i < cols; i++){
             for(let j = 0; j < rows; j++){
-                // let positionX = (width/2 - imgW/2) + (i * imgW/cols);
                 let positionX = (i * imgW/cols);
                 let positionY = (height/2 - imgH/2) + (j * imgH/rows);
                 let p = new Puzzle(i, j, {x: positionX, y: positionY}, {x: positionX, y: positionY});
@@ -222,7 +219,6 @@
                 let col = i;
 
                 let p = puzzlePieces[count]
-                // console.log(p, 'r: ', row, 'c:', col, count)
                 if(row == rows-1){
                     p.shape.bottom = null;
                 }
@@ -256,7 +252,7 @@
             }
         }
 
-        // randomisePuzzles(puzzlePieces, width - imgW/cols, height - imgH/rows);
+        randomisePuzzles(puzzlePieces, width - imgW/cols, height - imgH/rows);
 
 	}
 
