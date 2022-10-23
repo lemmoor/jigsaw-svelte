@@ -3,15 +3,14 @@
   font-size: 16px;
   line-height: 24px;
   font-weight: 400;
+  background: url('./bg.png') no-repeat center;
+  background-size:cover;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
 }
 
-*, *::before, *::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-a {
-  text-decoration: none;
-  color: inherit;
+form label{
+  color:black
 }
