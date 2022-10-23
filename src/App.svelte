@@ -13,7 +13,8 @@
 </script>
 
 <main class="container">
-  <h1>Create your own jigsaw!</h1>
+  <h1>Welcome to our website</h1>
+  <h1>Create your own Jigsaw!</h1>
   <form>
     <label for="img">Select image:</label>
     <input type="file" id="img" name="img" accept="image/*">
@@ -37,7 +38,12 @@
 {/if}
 
 <style>
- main {
-  margin-bottom: 2rem;
+
+ main h1{
+  color: black;
+  text-align: center;
+  margin: 1rem;
+
+
  }
 </style>
