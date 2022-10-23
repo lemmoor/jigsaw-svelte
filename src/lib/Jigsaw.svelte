@@ -2,9 +2,16 @@
 // @ts-nocheck
     import { Canvas, Layer, t} from "svelte-canvas";
     export let img;
+    // export let num_rows;
+    import { num_rows } from './stores.js';
+    let num_rows_value;
+    num_rows.subscribe(value => {
+        num_rows_value = value;
+    });
+
     window.devicePixelRatio = 1;
-    const rows = 5;
-    const cols = 5;
+    const rows = num_rows_value;
+    const cols = num_rows_value;
     const scale = 0.7 
     let canvasWidth = window.innerWidth;
     const canvasHeight = 1000;
