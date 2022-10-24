@@ -176,11 +176,23 @@
         }
     }
 
+    //deeclaring the sound
+    let puzzle = false;
+    let puzzleSound;
+
     function handleMouseup () {
         if(movingPuzzle){
             let distThreshold = 30;
             if(Math.abs(movingPuzzle.currentPos.x - movingPuzzle.correctPos.x) < distThreshold 
             && Math.abs(movingPuzzle.currentPos.y - movingPuzzle.correctPos.y) < distThreshold){
+                //if puzzle in correct place play sound
+                puzzle = !puzzle;
+			    puzzleSound.play();
+			    setTimeout(() =>{
+					puzzle= false;
+					puzzleSound.pause();
+					puzzleSound.currentTime = 0;
+			    }, 500)
                 movingPuzzle.currentPos.x = movingPuzzle.correctPos.x;
                 movingPuzzle.currentPos.y = movingPuzzle.correctPos.y;
                 //make puzzles underneath be on top of the correct placed one
@@ -286,4 +298,8 @@
     <Layer {render} {setup}/>
 </Canvas>
 
+<!-- declaring the audio source -->
+<audio src=src\lib\puzzle.wav preload=auto bind:this={puzzleSound} controls>
+	<track kind="captions"/>
+</audio>
 
