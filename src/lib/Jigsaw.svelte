@@ -200,6 +200,7 @@
                     puzzleSound.pause();
                     puzzleSound.currentTime = 0;
                 }, 500)
+                
                 movingPuzzle.currentPos.x = movingPuzzle.correctPos.x;
                 movingPuzzle.currentPos.y = movingPuzzle.correctPos.y;
                 //make puzzles underneath be on top of the correct placed one
