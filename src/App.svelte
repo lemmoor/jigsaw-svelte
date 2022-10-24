@@ -12,7 +12,7 @@
 		num_rows_value = value;
 	});
   import { bg_alpha } from './lib/stores.js';
-  bg_alpha.update(n => 0);
+  bg_alpha.update(n => 0.4);
   let bg_alpha_value;
   bg_alpha.subscribe(value => {
 		bg_alpha_value = value;
@@ -74,15 +74,11 @@
     <p>Selected Hard ({num_rows_value} x {num_rows_value})</p>
   {/if}
 
-  {#if (gameStart)}
-    <input type="checkbox" disabled id="switch" class="checkbox" />
-  {:else}
-    <input on:click={toggleBackground} type="checkbox" id="switch" class="checkbox" />
-  {/if}
+  <input on:click={toggleBackground} type="checkbox" checked id="switch" class="checkbox" />
   <label for="switch" class="toggle">
     <p>Background image</p>
   </label>
-  
+
   <button on:click={startGame}>Start</button>
 </main>
 {#if (gameStart)}
