@@ -11,6 +11,12 @@
   num_rows.subscribe(value => {
 		num_rows_value = value;
 	});
+  import { bg_alpha } from './lib/stores.js';
+  bg_alpha.update(n => 0.4);
+  let bg_alpha_value;
+  bg_alpha.subscribe(value => {
+		bg_alpha_value = value;
+	});
 
   function startGame () {
     if(jigsawSrc){
@@ -25,6 +31,13 @@
       num_rows.update(n => 7);
     } else if (selected === 'Hard') {
       num_rows.update(n => 10);
+    }
+  }
+  function toggleBackground () {
+    if(bg_alpha_value > 0) {
+      bg_alpha.update(n => 0.0);
+    } else {
+      bg_alpha.update(n => 0.4);
     }
   }
 </script>
@@ -60,6 +73,12 @@
   {:else if selected === 'Hard'}
     <p>Selected Hard ({num_rows_value} x {num_rows_value})</p>
   {/if}
+
+  <input on:click={toggleBackground} type="checkbox" checked id="switch" class="checkbox" />
+  <label for="switch" class="toggle">
+    <p>Background image</p>
+  </label>
+
   <button on:click={startGame}>Start</button>
 </main>
 {#if (gameStart)}
@@ -71,4 +90,3 @@
   margin-bottom: 2rem;
  }
 </style>
-

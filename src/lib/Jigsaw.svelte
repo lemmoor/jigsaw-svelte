@@ -8,17 +8,23 @@
     num_rows.subscribe(value => {
         num_rows_value = value;
     });
+    import { bg_alpha } from './stores.js';
+    let bg_alpha_value;
+    bg_alpha.subscribe(value => {
+        bg_alpha_value = value;
+    });
 
     window.devicePixelRatio = 1;
     const rows = num_rows_value;
     const cols = num_rows_value;
-    const scale = 0.7 
+    const scale = 0.7
     let canvasWidth = window.innerWidth;
     const canvasHeight = 1000;
     const resize = scale * Math.min(canvasWidth/img.naturalWidth, canvasHeight/img.naturalHeight);
     const imgW = resize * img.naturalWidth;
     const imgH = resize * img.naturalHeight;
     let OffsetCenteredX = (canvasWidth - 50)/2 - imgW/2; //x coords for a centered image
+    let OffsetCenteredY = (canvasHeight - 50)/2 - imgH/2; //y coords for a centered image
     let puzzlePieces = [];
     let movingPuzzleOffset;
     let movingPuzzle;
@@ -32,6 +38,7 @@
           this.correctPos = {x: correctPos.x, y: correctPos.y};
           this.currentPos = {x: currentPos.x, y: currentPos.y};
           this.path = null;
+          this.borderpath = null;
           this.shape = {};
         }
 
@@ -53,7 +60,7 @@
                     this.currentPos.y - tabHeight * Math.sign(this.shape.top) * 0.2,
                     x + this.width * Math.abs(this.shape.top) - tabWidth,
                     this.currentPos.y - tabHeight * Math.sign(this.shape.top),
-                    x + this.width * Math.abs(this.shape.top), 
+                    x + this.width * Math.abs(this.shape.top),
                     this.currentPos.y - tabHeight * Math.sign(this.shape.top)
                 )
                 this.path.bezierCurveTo(
@@ -61,7 +68,7 @@
                     this.currentPos.y - tabHeight * Math.sign(this.shape.top),
                     x + this.width * Math.abs(this.shape.top) + tabBase,
                     this.currentPos.y - tabHeight * Math.sign(this.shape.top) * 0.2,
-                    x + this.width * Math.abs(this.shape.top) + tabBase, 
+                    x + this.width * Math.abs(this.shape.top) + tabBase,
                     this.currentPos.y
                 )
             }
@@ -149,7 +156,7 @@
             p[i].currentPos.x = Math.floor(Math.random() * maxX) - OffsetCenteredX;
             p[i].currentPos.y = Math.floor(Math.random() * maxY);
         }
-    }  
+    }
 
     let canv;
     function handleMousedown (x, y) {
@@ -183,16 +190,17 @@
     function handleMouseup () {
         if(movingPuzzle){
             let distThreshold = 30;
-            if(Math.abs(movingPuzzle.currentPos.x - movingPuzzle.correctPos.x) < distThreshold 
+            if(Math.abs(movingPuzzle.currentPos.x - movingPuzzle.correctPos.x) < distThreshold
             && Math.abs(movingPuzzle.currentPos.y - movingPuzzle.correctPos.y) < distThreshold){
                 //if puzzle in correct place play sound
                 puzzle = !puzzle;
-			    puzzleSound.play();
-			    setTimeout(() =>{
-					puzzle= false;
-					puzzleSound.pause();
-					puzzleSound.currentTime = 0;
-			    }, 500)
+                puzzleSound.play();
+                setTimeout(() =>{
+                    puzzle= false;
+                    puzzleSound.pause();
+                    puzzleSound.currentTime = 0;
+                }, 500)
+                
                 movingPuzzle.currentPos.x = movingPuzzle.correctPos.x;
                 movingPuzzle.currentPos.y = movingPuzzle.correctPos.y;
                 //make puzzles underneath be on top of the correct placed one
@@ -218,7 +226,7 @@
     }
 
     const setup = ({ context, width, height }) => {
-        // context.strokeStyle = '#000000';
+        //context.strokeStyle = '#ff0000';
         //generate puzzles
         for(let i = 0; i < cols; i++){
             for(let j = 0; j < rows; j++){
@@ -276,9 +284,14 @@
 	}
 
     $: render = ({ context, width, height }) => {
-        context.globalAlpha = 0.4;
+        context.globalAlpha = bg_alpha_value;
         context.drawImage(img, width/2 - imgW/2, height/2 - imgH/2, imgW, imgH);
         context.globalAlpha = 1;
+        if(bg_alpha_value == 0) {
+            context.beginPath();
+            context.rect(width/2 - imgW/2, height/2 - imgH/2, imgW, imgH);
+            context.stroke();
+        }
 
         for(let i = 0; i < puzzlePieces.length; i++){
             puzzlePieces[i].draw(context);
@@ -302,4 +315,3 @@
 <audio src=src\lib\puzzle.wav preload=auto bind:this={puzzleSound} controls>
 	<track kind="captions"/>
 </audio>
-
