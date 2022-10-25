@@ -75,7 +75,7 @@
   {/if}
 
   <input on:click={toggleBackground} type="checkbox" checked id="switch" class="checkbox" />
-  <label for="switch" class="toggle">
+  <label for="switch" class="toggle">
     <p>Background image</p>
   </label>
 
