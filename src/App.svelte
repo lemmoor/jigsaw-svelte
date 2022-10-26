@@ -44,9 +44,10 @@
 
 <main class="container">
   <h1>Create your own jigsaw!</h1>
-  <form>
-    <label for="img">Select image:</label>
+  <form class="form-1">
     <input type="file" id="img" name="img" accept="image/*">
+    <button class="img-button">Select image</button>
+    <label for="img">and</label>
     <input type="submit" on:click|preventDefault={(e) => {
       // @ts-ignore
       let file = e.target.form[0].files[0]
@@ -56,6 +57,7 @@
       console.log(jigsawSrc)
     }}>
   </form>
+  <p>or</p>
   <button on:click = {() => jigsawSrc = "https://picsum.photos/500?random="+ Math.floor(Math.random() * 1000)}>Solve random image</button>
   {#if (jigsawSrc)}
     <img src={jigsawSrc} bind:this={JigsawImg} alt="puzzle" width="700px">
