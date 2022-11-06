@@ -55,10 +55,12 @@
       }
       console.log(jigsawSrc)
     }}>
-    <button class="img-button" on:click|preventDefault={() => {imgInput.click()}}>Select image</button>
   </form>
-  <p>or</p>
-  <button on:click = {() => jigsawSrc = "https://picsum.photos/500?random="+ Math.floor(Math.random() * 1000)}>Solve random image</button>
+  <div class="choose-or-random-buttons">
+    <button class="img-button" on:click|preventDefault={() => {imgInput.click()}}>Select image</button>
+    <p>or</p>
+    <button on:click = {() => jigsawSrc = "https://picsum.photos/500?random="+ Math.floor(Math.random() * 1000)}>Solve random image</button>
+  </div>
   {#if (jigsawSrc)}
     <img src={jigsawSrc} bind:this={JigsawImg} alt="puzzle" width="700px">
   {/if}
@@ -76,10 +78,12 @@
     <p>Selected Hard ({num_rows_value} x {num_rows_value})</p>
   {/if}
 
-  <input on:click={toggleBackground} type="checkbox" checked id="switch" class="checkbox" />
-  <label for="switch" class="toggle">
-    <p>Background image</p>
-  </label>
+  <div class="background-image-checkbox-wrapper">
+    <input on:click={toggleBackground} type="checkbox" checked id="switch" class="checkbox" />
+    <label for="switch" class="toggle">
+      <p>Background image</p>
+    </label>
+  </div>
 
   <button on:click={startGame}>Start</button>
 </main>
