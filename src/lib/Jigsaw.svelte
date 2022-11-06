@@ -1,6 +1,7 @@
 <script>
 // @ts-nocheck
     import { Canvas, Layer, t} from "svelte-canvas";
+    import audio from "/src/assets/puzzle.wav";
     export let img;
     // export let num_rows;
     import { num_rows } from './stores.js';
@@ -312,6 +313,6 @@
 </Canvas>
 
 <!-- declaring the audio source -->
-<audio src=src\assets\puzzle.wav preload=auto bind:this={puzzleSound} controls>
+<audio src={audio} preload=auto bind:this={puzzleSound} controls>
 	<track kind="captions"/>
 </audio>
