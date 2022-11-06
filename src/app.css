@@ -81,6 +81,10 @@ select {
   justify-content: center;
 }
 
+button, input {
+  cursor: pointer;
+}
+
 @media (orientation: portrait) {
   main {
     width: 90%;
