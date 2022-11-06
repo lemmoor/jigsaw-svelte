@@ -40,15 +40,14 @@
       bg_alpha.update(n => 0.4);
     }
   }
+
+  let imgInput;
 </script>
 
 <main class="container">
   <h1>Create your own jigsaw!</h1>
   <form class="form-1">
-    <input type="file" id="img" name="img" accept="image/*">
-    <button class="img-button">Select image</button>
-    <label for="img">and</label>
-    <input type="submit" on:click|preventDefault={(e) => {
+    <input type="file" id="img" name="img" accept="image/*" bind:this={imgInput} on:change={(e) => {
       // @ts-ignore
       let file = e.target.form[0].files[0]
       if(file){
@@ -56,6 +55,7 @@
       }
       console.log(jigsawSrc)
     }}>
+    <button class="img-button" on:click|preventDefault={() => {imgInput.click()}}>Select image</button>
   </form>
   <p>or</p>
   <button on:click = {() => jigsawSrc = "https://picsum.photos/500?random="+ Math.floor(Math.random() * 1000)}>Solve random image</button>

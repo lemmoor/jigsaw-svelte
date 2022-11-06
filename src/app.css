@@ -59,11 +59,6 @@ input, button {
 }
 
 .form-1 {
-  display: grid;
-  align-items: center;
-  justify-items: center;
-  grid-template-columns: 1fr min-content 1fr;
-  gap: 1rem;
   width: 100%;
 }
 
