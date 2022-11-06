@@ -40,14 +40,14 @@
       bg_alpha.update(n => 0.4);
     }
   }
+
+  let imgInput;
 </script>
 
 <main class="container">
   <h1>Create your own jigsaw!</h1>
-  <form>
-    <label for="img">Select image:</label>
-    <input type="file" id="img" name="img" accept="image/*">
-    <input type="submit" on:click|preventDefault={(e) => {
+  <form class="form-1">
+    <input type="file" id="img" name="img" accept="image/*" bind:this={imgInput} on:change={(e) => {
       // @ts-ignore
       let file = e.target.form[0].files[0]
       if(file){
@@ -56,7 +56,11 @@
       console.log(jigsawSrc)
     }}>
   </form>
-  <button on:click = {() => jigsawSrc = "https://picsum.photos/500?random="+ Math.floor(Math.random() * 1000)}>Solve random image</button>
+  <div class="choose-or-random-buttons">
+    <button class="img-button" on:click|preventDefault={() => {imgInput.click()}}>Select image</button>
+    <p>or</p>
+    <button on:click = {() => jigsawSrc = "https://picsum.photos/500?random="+ Math.floor(Math.random() * 1000)}>Solve random image</button>
+  </div>
   {#if (jigsawSrc)}
     <img src={jigsawSrc} bind:this={JigsawImg} alt="puzzle" width="700px">
   {/if}
@@ -74,10 +78,12 @@
     <p>Selected Hard ({num_rows_value} x {num_rows_value})</p>
   {/if}
 
-  <input on:click={toggleBackground} type="checkbox" checked id="switch" class="checkbox" />
-  <label for="switch" class="toggle">
-    <p>Background image</p>
-  </label>
+  <div class="background-image-checkbox-wrapper">
+    <input on:click={toggleBackground} type="checkbox" checked id="switch" class="checkbox" />
+    <label for="switch" class="toggle">
+      <p>Background image</p>
+    </label>
+  </div>
 
   <button on:click={startGame}>Start</button>
 </main>
