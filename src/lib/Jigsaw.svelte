@@ -312,6 +312,6 @@
 </Canvas>
 
 <!-- declaring the audio source -->
-<audio src=src\lib\puzzle.wav preload=auto bind:this={puzzleSound} controls>
+<audio src=src\assets\puzzle.wav preload=auto bind:this={puzzleSound} controls>
 	<track kind="captions"/>
 </audio>
