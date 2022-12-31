@@ -29,6 +29,7 @@
     let puzzlePieces = [];
     let movingPuzzleOffset;
     let movingPuzzle;
+    let movingPuzzleIndex = null;
     let solvedPuzzles = 0;
 
     class Puzzle {
@@ -167,6 +168,7 @@
         for(let i = puzzlePieces.length - 1; i >=0; i--){
             if(ctx.isPointInPath(puzzlePieces[i].path, x, y)){
                 movingPuzzle = puzzlePieces[i];
+                movingPuzzleIndex = i
                 break;
             }
         }
@@ -202,7 +204,8 @@
         let timeout = null;
         if(movingPuzzle){
             let distThreshold = 30;
-            let piece = puzzlePieces.splice(puzzlePieces.findIndex((p) => p.j == movingPuzzle.j && p.i == movingPuzzle.i), 1);
+            const movingElementIndex = puzzlePieces.findIndex((p) => p.j == movingPuzzle.j && p.i == movingPuzzle.i);
+            console.log({movingElementIndex})
             if(Math.abs(movingPuzzle.currentPos.x - movingPuzzle.correctPos.x) < distThreshold
             && Math.abs(movingPuzzle.currentPos.y - movingPuzzle.correctPos.y) < distThreshold){
                 //if puzzle in correct place play sound
@@ -216,20 +219,25 @@
 
                 movingPuzzle.currentPos.x = movingPuzzle.correctPos.x;
                 movingPuzzle.currentPos.y = movingPuzzle.correctPos.y;
+
+                let piece = puzzlePieces.splice(movingElementIndex, 1);
+
                 if(!movingPuzzle.solved) {
                     piece[0].solved = true
                     solvedPuzzles = solvedPuzzles + 1;
                 }
-                if(setTimeout) clearTimeout(timeout)
+
+                if(timeout) clearTimeout(timeout)
+
+                //make puzzles underneath be on top of the correct placed one
+                puzzlePieces.unshift(piece[0]);
+                puzzlePieces = puzzlePieces
             } else {
                 if(movingPuzzle.solved) {
-                    piece[0].solved = false;
+                    puzzlePieces[movingElementIndex].solved = false;
                     solvedPuzzles = solvedPuzzles - 1;
                 }
             }
-            //make puzzles underneath be on top of the correct placed one
-            puzzlePieces.unshift(piece[0]);
-            puzzlePieces = puzzlePieces
 
             movingPuzzleOffset = null;
             movingPuzzle = null;
