@@ -41,6 +41,7 @@
           this.path = null;
           this.borderpath = null;
           this.shape = {};
+          this.solved = false;
         }
 
         draw (ctx) {
@@ -184,34 +185,52 @@
         }
     }
 
+    function checkPuzzleSolved (){
+        const isSolved = !puzzlePieces.some(({solved})=>!solved)
+
+        if(isSolved) {
+            console.log("Puzzle has been successfully solved")
+        }
+    }
+
     //deeclaring the sound
     let puzzle = false;
     let puzzleSound;
 
     function handleMouseup () {
+        let timeout = null;
         if(movingPuzzle){
             let distThreshold = 30;
+            let piece = puzzlePieces.splice(puzzlePieces.findIndex((p) => p.j == movingPuzzle.j && p.i == movingPuzzle.i), 1);
             if(Math.abs(movingPuzzle.currentPos.x - movingPuzzle.correctPos.x) < distThreshold
             && Math.abs(movingPuzzle.currentPos.y - movingPuzzle.correctPos.y) < distThreshold){
                 //if puzzle in correct place play sound
                 puzzle = !puzzle;
                 puzzleSound.play();
-                setTimeout(() =>{
+                timeout = setTimeout(() =>{
                     puzzle= false;
                     puzzleSound.pause();
                     puzzleSound.currentTime = 0;
                 }, 500)
-                
+
                 movingPuzzle.currentPos.x = movingPuzzle.correctPos.x;
                 movingPuzzle.currentPos.y = movingPuzzle.correctPos.y;
-                //make puzzles underneath be on top of the correct placed one
-                let piece = puzzlePieces.splice(puzzlePieces.findIndex((p) => p.j == movingPuzzle.j && p.i == movingPuzzle.i), 1);
-                puzzlePieces.unshift(piece[0]);
-                puzzlePieces = puzzlePieces;
+                piece[0].solved = true
+                if(setTimeout) clearTimeout(timeout)
+            } else {
+                if(movingPuzzle.solved) {
+                    piece[0].solved = false
+                }
             }
+            //make puzzles underneath be on top of the correct placed one
+            puzzlePieces.unshift(piece[0]);
+            puzzlePieces = puzzlePieces
+
             movingPuzzleOffset = null;
             movingPuzzle = null;
         }
+
+        checkPuzzleSolved()
     }
 
     function updateCoords(){
