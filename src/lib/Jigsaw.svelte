@@ -29,6 +29,7 @@
     let puzzlePieces = [];
     let movingPuzzleOffset;
     let movingPuzzle;
+    let solvedPuzzles = 0;
 
     class Puzzle {
         constructor(i,  j, correctPos, currentPos) {
@@ -186,7 +187,7 @@
     }
 
     function checkPuzzleSolved (){
-        const isSolved = !puzzlePieces.some(({solved})=>!solved)
+        const isSolved = solvedPuzzles === puzzlePieces.length
 
         if(isSolved) {
             console.log("Puzzle has been successfully solved")
@@ -215,11 +216,15 @@
 
                 movingPuzzle.currentPos.x = movingPuzzle.correctPos.x;
                 movingPuzzle.currentPos.y = movingPuzzle.correctPos.y;
-                piece[0].solved = true
+                if(!movingPuzzle.solved) {
+                    piece[0].solved = true
+                    solvedPuzzles = solvedPuzzles + 1;
+                }
                 if(setTimeout) clearTimeout(timeout)
             } else {
                 if(movingPuzzle.solved) {
-                    piece[0].solved = false
+                    piece[0].solved = false;
+                    solvedPuzzles = solvedPuzzles - 1;
                 }
             }
             //make puzzles underneath be on top of the correct placed one
