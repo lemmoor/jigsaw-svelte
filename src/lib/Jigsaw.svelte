@@ -205,7 +205,6 @@
         if(movingPuzzle){
             let distThreshold = 30;
             const movingElementIndex = puzzlePieces.findIndex((p) => p.j == movingPuzzle.j && p.i == movingPuzzle.i);
-            console.log({movingElementIndex})
             if(Math.abs(movingPuzzle.currentPos.x - movingPuzzle.correctPos.x) < distThreshold
             && Math.abs(movingPuzzle.currentPos.y - movingPuzzle.correctPos.y) < distThreshold){
                 //if puzzle in correct place play sound
@@ -248,7 +247,6 @@
 
     function updateCoords(){
         OffsetCenteredX = (canvasWidth - 50)/2 - imgW/2;
-        // randomisePuzzles(puzzlePieces, (canvasWidth - 50) - imgW/cols, canvasHeight - imgH/rows);
         canv.redraw();
     }
 
