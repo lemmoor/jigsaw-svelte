@@ -1,6 +1,7 @@
 <script>
 // @ts-nocheck
     import { Canvas, Layer, t} from "svelte-canvas";
+    import Modal from "./Modal.svelte";
     import audio from "/src/assets/puzzle.wav";
     export let img;
     // export let num_rows;
@@ -31,6 +32,8 @@
     let movingPuzzle;
     let movingPuzzleIndex = null;
     let solvedPuzzles = 0;
+    let endGame = false;
+    let timer= new Date();
 
     class Puzzle {
         constructor(i,  j, correctPos, currentPos) {
@@ -192,7 +195,7 @@
         const isSolved = solvedPuzzles === puzzlePieces.length
 
         if(isSolved) {
-            console.log("Puzzle has been successfully solved")
+            endGame = true;
         }
     }
 
@@ -254,6 +257,19 @@
     function handleResize () {
         clearTimeout(resizeTimeout)
         resizeTimeout = setTimeout(updateCoords, 100);
+    }
+
+    function getReadableTime(time){
+        const zeroPad = (num) => String(num).padStart(2, '0')
+
+        let ms = time % 1000;
+        time = (time - ms) / 1000;
+        let secs = time % 60;
+        time = (time - secs) / 60;
+        let mins = time % 60;
+        let hrs = (time - mins) / 60;
+
+        return `${zeroPad(hrs)}:${zeroPad(mins)}:${zeroPad(secs)}.${zeroPad(ms)}`
     }
 
     const setup = ({ context, width, height }) => {
@@ -342,7 +358,22 @@
     <Layer {render} {setup}/>
 </Canvas>
 
+{#if endGame}
+    <Modal on:close={() => endGame = false}>
+        <h2>Puzzle solved!</h2>
+        <p class="modal-text">Your time: {getReadableTime(new Date() - timer)}</p>
+    </Modal>
+{/if}
+
 <!-- declaring the audio source -->
 <audio src={audio} preload=auto bind:this={puzzleSound} controls>
 	<track kind="captions"/>
 </audio>
+
+
+<style>
+    .modal-text {
+        font-size: 1.5rem;
+        margin-top: 2rem;
+    }
+</style>
