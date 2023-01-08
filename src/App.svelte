@@ -1,27 +1,38 @@
 <script>
+  //@ts-nocheck
   import Jigsaw from './lib/Jigsaw.svelte'
+  import Modal from './lib/Modal.svelte';
   let jigsawSrc;
-  let gameStart = false;
+  let gameStarted = false;
   let JigsawImg;
   const options = ['Easy', 'Medium', 'Hard'];
   let selected = options[0];
-  import { num_rows } from './lib/stores.js';
+  import { num_rows, bg_alpha, gameEnded, timer } from './lib/stores.js';
+  import { getReadableTime } from './utils';
   num_rows.update(n => 5);
   let num_rows_value;
   num_rows.subscribe(value => {
 		num_rows_value = value;
 	});
-  import { bg_alpha } from './lib/stores.js';
   bg_alpha.update(n => 0.4);
   let bg_alpha_value;
   bg_alpha.subscribe(value => {
 		bg_alpha_value = value;
 	});
 
+
+  function resetGame() {
+    gameStarted = false;
+    $gameEnded = false;
+    jigsawSrc = "";
+    JigsawImg.style.display = "block";
+  }
+
   function startGame () {
     if(jigsawSrc){
-      gameStart = true;
+      gameStarted = true;
       JigsawImg.style.display = "none";
+      $timer = new Date();
     }
   }
   function setLevel () {
@@ -46,6 +57,7 @@
 
 <main class="container">
   <h1>Create your own jigsaw!</h1>
+  {#if (!gameStarted)}
   <form class="form-1">
     <input type="file" id="img" name="img" accept="image/*" bind:this={imgInput} on:change={(e) => {
       // @ts-ignore
@@ -53,7 +65,6 @@
       if(file){
         jigsawSrc = URL.createObjectURL(file)
       }
-      console.log(jigsawSrc)
     }}>
   </form>
   <div class="choose-or-random-buttons">
@@ -61,9 +72,11 @@
     <p>or</p>
     <button on:click = {() => jigsawSrc = "https://picsum.photos/500?random="+ Math.floor(Math.random() * 1000)}>Solve random image</button>
   </div>
+  {/if}
   {#if (jigsawSrc)}
     <img src={jigsawSrc} bind:this={JigsawImg} alt="puzzle" width="700px">
   {/if}
+  {#if !gameStarted}
   <select bind:value={selected} on:click={setLevel}>
     {#each options as option}
       <option value={option}>{option}</option>
@@ -78,6 +91,8 @@
     <p>Selected Hard ({num_rows_value} x {num_rows_value})</p>
   {/if}
 
+  {/if}
+
   <div class="background-image-checkbox-wrapper">
     <input on:click={toggleBackground} type="checkbox" checked id="switch" class="checkbox" />
     <label for="switch" class="toggle">
@@ -85,14 +100,27 @@
     </label>
   </div>
 
-  <button on:click={startGame}>Start</button>
+  <button on:click={() => {if(gameStarted) resetGame(); else startGame()}}>New Game</button>
 </main>
-{#if (gameStart)}
+{#if (gameStarted)}
 <Jigsaw img={JigsawImg}/>
+{/if}
+
+{#if $gameEnded}
+    <Modal on:close={resetGame}>
+        <h2>Puzzle solved!</h2>
+        
+        <p class="modal-text">Your time: {getReadableTime(new Date() - $timer)}</p>
+    </Modal>
 {/if}
 
 <style>
  main {
   margin-bottom: 2rem;
  }
+
+  .modal-text {
+      font-size: 1.5rem;
+      margin-top: 2rem;
+  }
 </style>

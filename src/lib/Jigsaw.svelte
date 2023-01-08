@@ -1,17 +1,14 @@
 <script>
 // @ts-nocheck
     import { Canvas, Layer, t} from "svelte-canvas";
-    import Modal from "./Modal.svelte";
     import audio from "/src/assets/puzzle.wav";
     import Puzzle from "./puzzle";
-    import {getReadableTime} from "../utils.js";
     export let img;
-    import { num_rows } from './stores.js';
+    import { num_rows, bg_alpha, gameEnded } from './stores.js';
     let num_rows_value;
     num_rows.subscribe(value => {
         num_rows_value = value;
     });
-    import { bg_alpha } from './stores.js';
     let bg_alpha_value;
     bg_alpha.subscribe(value => {
         bg_alpha_value = value;
@@ -33,9 +30,7 @@
     let movingPuzzle;
     let movingPuzzleIndex = null;
     let solvedPuzzles = 0;
-    let cursorStyle = "";
-    let endGame = false;
-    let timer= new Date();
+    let cursorStyle = "default";
 
     function randomisePuzzles (p, maxX, maxY) {
         for(let i = 0; i < p.length; i++){
@@ -75,7 +70,7 @@
         const isSolved = solvedPuzzles === puzzlePieces.length
 
         if(isSolved) {
-            endGame = true;
+            gameEnded.update(n => true);
         }
     }
 
@@ -215,7 +210,7 @@
 
 <svelte:window bind:innerWidth={canvasWidth} on:resize={handleResize}/>
 
-<Canvas width={canvasWidth-50} height={canvasHeight} style="margin: 0 auto; border: 1px solid black; cursor: {cursorStyle}" bind:this={canv}
+<Canvas width={canvasWidth-50} height={canvasHeight} style="margin: 0 auto; border: 1px solid black; cursor: {cursorStyle};" bind:this={canv}
     on:mousedown={(e) => { handleMousedown(e.offsetX, e.offsetY)}}
     on:mousemove={(e) => {handleMousemove(e.offsetX, e.offsetY)}}
     on:mouseup={() => {handleMouseup()}}
@@ -225,22 +220,9 @@
     <Layer {render} {setup}/>
 </Canvas>
 
-{#if endGame}
-    <Modal on:close={() => endGame = false}>
-        <h2>Puzzle solved!</h2>
-        <p class="modal-text">Your time: {getReadableTime(new Date() - timer)}</p>
-    </Modal>
-{/if}
+
 
 <!-- declaring the audio source -->
 <audio src={audio} preload=auto bind:this={puzzleSound} controls>
 	<track kind="captions"/>
 </audio>
-
-
-<style>
-    .modal-text {
-        font-size: 1.5rem;
-        margin-top: 2rem;
-    }
-</style>
