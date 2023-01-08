@@ -3,8 +3,9 @@
     import { Canvas, Layer, t} from "svelte-canvas";
     import Modal from "./Modal.svelte";
     import audio from "/src/assets/puzzle.wav";
+    import Puzzle from "./puzzle";
+    import {getReadableTime} from "../utils.js";
     export let img;
-    // export let num_rows;
     import { num_rows } from './stores.js';
     let num_rows_value;
     num_rows.subscribe(value => {
@@ -32,131 +33,9 @@
     let movingPuzzle;
     let movingPuzzleIndex = null;
     let solvedPuzzles = 0;
+    let cursorStyle = "";
     let endGame = false;
     let timer= new Date();
-
-    class Puzzle {
-        constructor(i,  j, correctPos, currentPos) {
-          this.width = imgW/cols;
-          this.height = imgH/rows;
-          this.i = i;
-          this.j = j;
-          this.correctPos = {x: correctPos.x, y: correctPos.y};
-          this.currentPos = {x: currentPos.x, y: currentPos.y};
-          this.path = null;
-          this.borderpath = null;
-          this.shape = {};
-          this.solved = false;
-        }
-
-        draw (ctx) {
-            const size = Math.min(this.width, this.height);
-            const tabBase = 0.08 * size;
-            const tabWidth = 0.2 * size;
-            const tabHeight = 0.2 * size;
-            let x = this.currentPos.x + OffsetCenteredX;
-
-            this.path = new Path2D();
-            this.path.moveTo(x, this.currentPos.y);
-            //top right
-            if(this.shape.top)
-            {
-                this.path.lineTo(x + this.width * Math.abs(this.shape.top) - tabBase, this.currentPos.y)
-                this.path.bezierCurveTo(
-                    x + this.width * Math.abs(this.shape.top) - tabBase,
-                    this.currentPos.y - tabHeight * Math.sign(this.shape.top) * 0.2,
-                    x + this.width * Math.abs(this.shape.top) - tabWidth,
-                    this.currentPos.y - tabHeight * Math.sign(this.shape.top),
-                    x + this.width * Math.abs(this.shape.top),
-                    this.currentPos.y - tabHeight * Math.sign(this.shape.top)
-                )
-                this.path.bezierCurveTo(
-                    x + this.width * Math.abs(this.shape.top) + tabWidth,
-                    this.currentPos.y - tabHeight * Math.sign(this.shape.top),
-                    x + this.width * Math.abs(this.shape.top) + tabBase,
-                    this.currentPos.y - tabHeight * Math.sign(this.shape.top) * 0.2,
-                    x + this.width * Math.abs(this.shape.top) + tabBase,
-                    this.currentPos.y
-                )
-            }
-            this.path.lineTo(x + this.width, this.currentPos.y);
-            //bottom right
-            if(this.shape.right){
-                this.path.lineTo(x + this.width, this.currentPos.y + this.height * Math.abs(this.shape.right) - tabBase);
-                this.path.bezierCurveTo(
-                    x + this.width - tabHeight * Math.sign(this.shape.right) * 0.2,
-                    this.currentPos.y + this.height * Math.abs(this.shape.right) - tabBase,
-                    x + this.width - tabHeight * Math.sign(this.shape.right),
-                    this.currentPos.y + this.height * Math.abs(this.shape.right) - tabWidth,
-                    x + this.width - tabHeight * Math.sign(this.shape.right),
-                    this.currentPos.y + this.height * Math.abs(this.shape.right)
-                )
-                this.path.bezierCurveTo(
-                    x + this.width - tabHeight * Math.sign(this.shape.right),
-                    this.currentPos.y + this.height * Math.abs(this.shape.right) + tabWidth,
-                    x + this.width - tabHeight * Math.sign(this.shape.right) * 0.2,
-                    this.currentPos.y + this.height * Math.abs(this.shape.right) + tabBase,
-                    x + this.width,
-                    this.currentPos.y + this.height * Math.abs(this.shape.right) + tabBase
-                )
-            }
-            this.path.lineTo(x + this.width, this.currentPos.y + this.height);
-            //bottom left
-            if(this.shape.bottom){
-                this.path.lineTo(x + this.width * Math.abs(this.shape.bottom) + tabBase, this.currentPos.y + this.height)
-                this.path.bezierCurveTo(
-                    x + this.width * Math.abs(this.shape.bottom) + tabBase,
-                    this.currentPos.y + this.height + tabHeight * Math.sign(this.shape.bottom) * 0.2,
-                    x + this.width * Math.abs(this.shape.bottom) + tabWidth,
-                    this.currentPos.y + this.height + tabHeight * Math.sign(this.shape.bottom),
-                    x + this.width * Math.abs(this.shape.bottom),
-                    this.currentPos.y + this.height + tabHeight * Math.sign(this.shape.bottom)
-                )
-                this.path.bezierCurveTo(
-                    x + this.width * Math.abs(this.shape.bottom) - tabWidth,
-                    this.currentPos.y + this.height + tabHeight * Math.sign(this.shape.bottom),
-                    x + this.width * Math.abs(this.shape.bottom) - tabBase,
-                    this.currentPos.y + this.height + tabHeight * Math.sign(this.shape.bottom) * 0.2,
-                    x + this.width * Math.abs(this.shape.bottom) - tabBase,
-                    this.currentPos.y + this.height
-                )
-            }
-            this.path.lineTo(x, this.currentPos.y + this.height);
-            //top left
-            if(this.shape.left){
-                this.path.lineTo(x, this.currentPos.y + this.height * Math.abs(this.shape.left) + tabBase);
-                this.path.bezierCurveTo(
-                    x + tabHeight * Math.sign(this.shape.left) * 0.2,
-                    this.currentPos.y + this.height * Math.abs(this.shape.left) + tabBase,
-                    x + tabHeight * Math.sign(this.shape.left),
-                    this.currentPos.y + this.height * Math.abs(this.shape.left) + tabWidth,
-                    x + tabHeight * Math.sign(this.shape.left),
-                    this.currentPos.y + this.height * Math.abs(this.shape.left)
-                )
-                this.path.bezierCurveTo(
-                    x + tabHeight * Math.sign(this.shape.left),
-                    this.currentPos.y + this.height * Math.abs(this.shape.left) - tabWidth,
-                    x + tabHeight * Math.sign(this.shape.left) * 0.2,
-                    this.currentPos.y + this.height * Math.abs(this.shape.left) - tabBase,
-                    x,
-                    this.currentPos.y + this.height * Math.abs(this.shape.left) - tabBase
-                )
-            }
-            this.path.lineTo(x, this.currentPos.y);
-
-            ctx.save();
-            ctx.clip(this.path);
-            let w = img.naturalWidth/cols;
-            let h = img.naturalHeight/rows;
-            let scaledTabH = Math.min(w, h) * tabHeight/size;
-            ctx.drawImage(img, this.i * w - scaledTabH, this.j * h - scaledTabH, w + scaledTabH*2, h + scaledTabH * 2,
-                            x - tabHeight, this.currentPos.y - tabHeight, this.width + tabHeight*2, this.height + tabHeight * 2);
-
-            ctx.restore();
-            ctx.stroke(this.path);
-        }
-
-    }
 
     function randomisePuzzles (p, maxX, maxY) {
         for(let i = 0; i < p.length; i++){
@@ -176,6 +55,7 @@
             }
         }
         if(movingPuzzle){
+            cursorStyle = "grab";
             movingPuzzleOffset = {x: (x - (movingPuzzle.currentPos.x)), y: (y - movingPuzzle.currentPos.y)}
             let piece = puzzlePieces.splice(puzzlePieces.findIndex((p) => p.j == movingPuzzle.j && p.i == movingPuzzle.i), 1);
             puzzlePieces.push(piece[0]);
@@ -206,6 +86,7 @@
     function handleMouseup () {
         let timeout = null;
         if(movingPuzzle){
+            cursorStyle = "default"
             let distThreshold = 30;
             const movingElementIndex = puzzlePieces.findIndex((p) => p.j == movingPuzzle.j && p.i == movingPuzzle.i);
             if(Math.abs(movingPuzzle.currentPos.x - movingPuzzle.correctPos.x) < distThreshold
@@ -259,19 +140,6 @@
         resizeTimeout = setTimeout(updateCoords, 100);
     }
 
-    function getReadableTime(time){
-        const zeroPad = (num) => String(num).padStart(2, '0')
-
-        let ms = time % 1000;
-        time = (time - ms) / 1000;
-        let secs = time % 60;
-        time = (time - secs) / 60;
-        let mins = time % 60;
-        let hrs = (time - mins) / 60;
-
-        return `${zeroPad(hrs)}:${zeroPad(mins)}:${zeroPad(secs)}.${zeroPad(ms)}`
-    }
-
     const setup = ({ context, width, height }) => {
         //context.strokeStyle = '#ff0000';
         //generate puzzles
@@ -279,7 +147,7 @@
             for(let j = 0; j < rows; j++){
                 let positionX = (i * imgW/cols);
                 let positionY = (height/2 - imgH/2) + (j * imgH/rows);
-                let p = new Puzzle(i, j, {x: positionX, y: positionY}, {x: positionX, y: positionY});
+                let p = new Puzzle(i, j, {x: positionX, y: positionY}, {x: positionX, y: positionY}, imgW/cols, imgH/rows);
                 puzzlePieces.push(p);
             }
         }
@@ -288,7 +156,6 @@
         let count = 0;
         for(let i = 0; i < cols; i++){
             for(let j = 0; j < rows; j++){
-                //in case i ever find the place where i and j switched. (i should be row, j - col).
                 let row = j;
                 let col = i;
 
@@ -341,14 +208,14 @@
         }
 
         for(let i = 0; i < puzzlePieces.length; i++){
-            puzzlePieces[i].draw(context);
+            puzzlePieces[i].draw(context, img, OffsetCenteredX, rows);
         }
     };
 </script>
 
 <svelte:window bind:innerWidth={canvasWidth} on:resize={handleResize}/>
 
-<Canvas width={canvasWidth-50} height={canvasHeight} style="margin: 0 auto; border: 1px solid black" bind:this={canv}
+<Canvas width={canvasWidth-50} height={canvasHeight} style="margin: 0 auto; border: 1px solid black; cursor: {cursorStyle}" bind:this={canv}
     on:mousedown={(e) => { handleMousedown(e.offsetX, e.offsetY)}}
     on:mousemove={(e) => {handleMousemove(e.offsetX, e.offsetY)}}
     on:mouseup={() => {handleMouseup()}}
