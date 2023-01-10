@@ -17,6 +17,7 @@ a {
   text-decoration: none;
   color: inherit;
 }
+
 /* to not display the audio tag */
 audio {
   display: none;
@@ -32,7 +33,6 @@ audio {
 
 main {
   width: 50%;
-  margin-top: 1rem;
   display: flex;
   flex-direction: column;
   align-items: center;

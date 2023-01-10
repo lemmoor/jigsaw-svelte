@@ -56,8 +56,8 @@
 </script>
 
 <main class="container">
-  <h1>Create your own jigsaw!</h1>
   {#if (!gameStarted)}
+  <h1>Create your own jigsaw!</h1>
   <form class="form-1">
     <input type="file" id="img" name="img" accept="image/*" bind:this={imgInput} on:change={(e) => {
       // @ts-ignore
@@ -91,8 +91,6 @@
     <p>Selected Hard ({num_rows_value} x {num_rows_value})</p>
   {/if}
 
-  {/if}
-
   <div class="background-image-checkbox-wrapper">
     <input on:click={toggleBackground} type="checkbox" checked id="switch" class="checkbox" />
     <label for="switch" class="toggle">
@@ -101,7 +99,9 @@
   </div>
 
   <button on:click={() => {if(gameStarted) resetGame(); else startGame()}}>New Game</button>
+  {/if}
 </main>
+
 {#if (gameStarted)}
 <Jigsaw img={JigsawImg}/>
 {/if}
@@ -115,9 +115,9 @@
 {/if}
 
 <style>
- main {
+ /* main {
   margin-bottom: 2rem;
- }
+ } */
 
   .modal-text {
       font-size: 1.5rem;

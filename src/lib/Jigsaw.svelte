@@ -19,12 +19,12 @@
     const cols = num_rows_value;
     const scale = 0.7
     let canvasWidth = window.innerWidth;
-    const canvasHeight = 1000;
+    const canvasHeight = window.innerHeight;
     const resize = scale * Math.min(canvasWidth/img.naturalWidth, canvasHeight/img.naturalHeight);
     const imgW = resize * img.naturalWidth;
     const imgH = resize * img.naturalHeight;
-    let OffsetCenteredX = (canvasWidth - 50)/2 - imgW/2; //x coords for a centered image
-    let OffsetCenteredY = (canvasHeight - 50)/2 - imgH/2; //y coords for a centered image
+    let OffsetCenteredX = (canvasWidth)/2 - imgW/2; //x coords for a centered image
+    let OffsetCenteredY = (canvasHeight)/2 - imgH/2; //y coords for a centered image
     let puzzlePieces = [];
     let movingPuzzleOffset;
     let movingPuzzle;
@@ -40,7 +40,7 @@
     }
 
     let canv;
-    function handleMousedown (x, y) {
+    function handleMousedown (x, y, e=null) {
         let ctx = canv.getContext();
         for(let i = puzzlePieces.length - 1; i >=0; i--){
             if(ctx.isPointInPath(puzzlePieces[i].path, x, y)){
@@ -50,6 +50,7 @@
             }
         }
         if(movingPuzzle){
+            if(e) e.preventDefault();
             cursorStyle = "grab";
             movingPuzzleOffset = {x: (x - (movingPuzzle.currentPos.x)), y: (y - movingPuzzle.currentPos.y)}
             let piece = puzzlePieces.splice(puzzlePieces.findIndex((p) => p.j == movingPuzzle.j && p.i == movingPuzzle.i), 1);
@@ -58,8 +59,9 @@
         }
     }
 
-    function handleMousemove (x, y) {
+    function handleMousemove (x, y, e=null) {
         if(movingPuzzleOffset){
+            if(e) e.preventDefault()
             movingPuzzle.currentPos.x = x - movingPuzzleOffset.x;
             movingPuzzle.currentPos.y = y - movingPuzzleOffset.y;
             puzzlePieces = puzzlePieces;
@@ -125,7 +127,7 @@
     }
 
     function updateCoords(){
-        OffsetCenteredX = (canvasWidth - 50)/2 - imgW/2;
+        OffsetCenteredX = (canvasWidth)/2 - imgW/2;
         canv.redraw();
     }
 
@@ -210,12 +212,12 @@
 
 <svelte:window bind:innerWidth={canvasWidth} on:resize={handleResize}/>
 
-<Canvas width={canvasWidth-50} height={canvasHeight} style="margin: 0 auto; border: 1px solid black; cursor: {cursorStyle};" bind:this={canv}
+<Canvas width={canvasWidth} height={canvasHeight} style="margin: 0 auto; touch-action: none;border: 1px solid black; cursor: {cursorStyle};" bind:this={canv}
     on:mousedown={(e) => { handleMousedown(e.offsetX, e.offsetY)}}
     on:mousemove={(e) => {handleMousemove(e.offsetX, e.offsetY)}}
     on:mouseup={() => {handleMouseup()}}
-    on:touchstart={(e) => handleMousedown(e.touches[0].clientX, e.touches[0].clientY)}
-    on:touchmove ={(e) => {handleMousemove(e.touches[0].clientX, e.touches[0].clientY)}}
+    on:touchstart={(e) => handleMousedown(e.touches[0].clientX, e.touches[0].clientY, e)}
+    on:touchmove ={(e) => {handleMousemove(e.touches[0].clientX, e.touches[0].clientY, e)}}
     on:touchend={() => {handleMouseup()}}>
     <Layer {render} {setup}/>
 </Canvas>
