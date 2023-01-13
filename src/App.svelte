@@ -109,7 +109,7 @@
 {#if (gameStarted)}
 <Jigsaw img={JigsawImg}/>
 <GameMenu>
-  <img src={jigsawSrc} alt="solved jigsaw" style="max-width:32rem">
+  <img src={jigsawSrc} alt="solved jigsaw">
   <div class="background-image-checkbox-wrapper">
     <input on:click={toggleBackground} type="checkbox" checked id="switch" class="checkbox" />
     <label for="switch" class="toggle">
@@ -136,5 +136,10 @@
   .modal-text {
       font-size: 1.5rem;
       margin-top: 2rem;
+  }
+
+  img {
+    width: 100%;
+    max-width: 32rem;
   }
 </style>
