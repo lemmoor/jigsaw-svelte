@@ -1,11 +1,12 @@
 <script>
     import { createEventDispatcher} from 'svelte';
+    import { fade, scale } from "svelte/transition";
 
     const dispatch = createEventDispatcher();
     const close = () => dispatch('close');
 </script>
 
-<div class="modal">
+<div class="modal" in:scale out:fade>
     <!-- ✕ -->
     <span on:click={close}>&#10005;</span> 
     <div class="modal-content">
@@ -28,23 +29,14 @@
         transform: translate(-50%, -50%);
         background-color: #ffffff;
         width: 100%;
-        max-width: 50rem;
-        min-height: 40rem;
+        max-width: 40rem;
+        min-height: 35rem;
         padding: 2rem;
         /* margin: 1rem; */
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 1rem;
-
-        /* background: rgba(192, 192, 192, 0.3);
-        box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
-        backdrop-filter: blur( 8px );
-        -webkit-backdrop-filter: blur( 8px );
-        border-radius: 10px;
-        border: 1px solid rgba( 255, 255, 255, 0.18 );
-
-        color: white; */
 
         box-shadow: 0px 0px 25px -9px rgba(66, 68, 90, 1);
     }

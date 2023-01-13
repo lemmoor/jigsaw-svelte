@@ -2,10 +2,11 @@
   //@ts-nocheck
   import Jigsaw from './lib/Jigsaw.svelte'
   import Modal from './lib/Modal.svelte';
+  import GameMenu from './lib/GameMenu.svelte';
   let jigsawSrc;
   let gameStarted = false;
   let JigsawImg;
-  const options = ['Easy', 'Medium', 'Hard'];
+  const options = ['Easy', 'Medium', 'Hard', 'debug'];
   let selected = options[0];
   import { num_rows, bg_alpha, gameEnded, timer } from './lib/stores.js';
   import { getReadableTime } from './utils';
@@ -42,6 +43,9 @@
       num_rows.update(n => 7);
     } else if (selected === 'Hard') {
       num_rows.update(n => 10);
+    }
+      else if (selected === 'debug') {
+      num_rows.update(n => 2);
     }
   }
   function toggleBackground () {
@@ -104,12 +108,22 @@
 
 {#if (gameStarted)}
 <Jigsaw img={JigsawImg}/>
+<GameMenu>
+  <img src={jigsawSrc} alt="solved jigsaw" style="max-width:32rem">
+  <div class="background-image-checkbox-wrapper">
+    <input on:click={toggleBackground} type="checkbox" checked id="switch" class="checkbox" />
+    <label for="switch" class="toggle">
+      <p>Background image</p>
+    </label>
+  </div>
+
+  <button on:click={() => {if(gameStarted) resetGame(); else startGame()}}>New Game</button>
+</GameMenu>
 {/if}
 
 {#if $gameEnded}
     <Modal on:close={resetGame}>
         <h2>Puzzle solved!</h2>
-        
         <p class="modal-text">Your time: {getReadableTime(new Date() - $timer)}</p>
     </Modal>
 {/if}
