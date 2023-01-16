@@ -7,10 +7,10 @@
     }
 </script>
 
-<section on:click={toggleMenu} class:outro>
+<section on:click={toggleMenu}>
     <span>&bull;&bull;&bull;</span>
     {#if isOpen}
-    <div class="menu-content" transition:slide on:outrostart={() => outro = true} on:outroend={() => outro = false}>
+    <div class="menu-content" transition:slide>
         <slot></slot>
     </div>
     {/if}

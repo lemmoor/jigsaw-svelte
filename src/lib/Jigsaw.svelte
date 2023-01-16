@@ -225,6 +225,6 @@
 
 
 <!-- declaring the audio source -->
-<audio src={audio} preload=auto bind:this={puzzleSound} controls>
+<audio src={audio} preload=auto class="hidden" bind:this={puzzleSound} controls>
 	<track kind="captions"/>
 </audio>
