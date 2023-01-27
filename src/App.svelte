@@ -1,149 +1,164 @@
 <script>
-  //@ts-nocheck
-  import Jigsaw from './lib/Jigsaw.svelte'
-  import Modal from './lib/Modal.svelte';
-  import GameMenu from './lib/GameMenu.svelte';
-  import { num_rows, bg_alpha, gameEnded, timer } from './lib/stores.js';
-  import { getReadableTime, fetchImage } from './utils';
+	//@ts-nocheck
+	import Jigsaw from './lib/Jigsaw.svelte';
+	import Modal from './lib/Modal.svelte';
+	import GameMenu from './lib/GameMenu.svelte';
+	import { num_rows, bg_alpha, gameEnded, timer } from './lib/stores.js';
+	import { getReadableTime, fetchImage } from './utils';
 
-  let jigsawSrc;
-  let JigsawImg;
-  let imgInput;
-  let gameStarted = false;
+	let jigsawSrc;
+	let JigsawImg;
+	let imgInput;
+	let gameStarted = false;
 
-  const options = ['Easy', 'Medium', 'Hard', 'debug'];
-  let selected = options[0];
-  num_rows.update(n => 5);
-  let num_rows_value;
-  num_rows.subscribe(value => {
+	const options = ['Easy', 'Medium', 'Hard', 'debug'];
+	let selected = options[0];
+	num_rows.update((n) => 5);
+	let num_rows_value;
+	num_rows.subscribe((value) => {
 		num_rows_value = value;
 	});
-  bg_alpha.update(n => 0.4);
-  let bg_alpha_value;
-  bg_alpha.subscribe(value => {
+	bg_alpha.update((n) => 0.4);
+	let bg_alpha_value;
+	bg_alpha.subscribe((value) => {
 		bg_alpha_value = value;
 	});
 
-  function resetGame() {
-    gameStarted = false;
-    $gameEnded = false;
-    jigsawSrc = "";
-  }
+	function resetGame() {
+		gameStarted = false;
+		$gameEnded = false;
+		jigsawSrc = '';
+	}
 
-  function startGame () {
-    if(jigsawSrc){
-      gameStarted = true;
-      $timer = new Date();
-    }
-  }
-  function setLevel () {
-    if (selected === 'Easy'){
-      num_rows.update(n => 5);
-    } else if (selected === 'Medium') {
-      num_rows.update(n => 7);
-    } else if (selected === 'Hard') {
-      num_rows.update(n => 10);
-    }
-      else if (selected === 'debug') {
-      num_rows.update(n => 2);
-    }
-  }
+	function startGame() {
+		if (jigsawSrc) {
+			gameStarted = true;
+			$timer = new Date();
+		}
+	}
+	function setLevel() {
+		if (selected === 'Easy') {
+			num_rows.update((n) => 5);
+		} else if (selected === 'Medium') {
+			num_rows.update((n) => 7);
+		} else if (selected === 'Hard') {
+			num_rows.update((n) => 10);
+		} else if (selected === 'debug') {
+			num_rows.update((n) => 2);
+		}
+	}
 
-  function toggleBackground () {
-    if(bg_alpha_value > 0) {
-      bg_alpha.update(n => 0.0);
-    } else {
-      bg_alpha.update(n => 0.4);
-    }
-  }
+	function toggleBackground() {
+		if (bg_alpha_value > 0) {
+			bg_alpha.update((n) => 0.0);
+		} else {
+			bg_alpha.update((n) => 0.4);
+		}
+	}
 </script>
 
-{#if (!gameStarted)}
-<main class="container mx-auto flex items-center content-center flex-col">
-  <h1 class="text-3xl font-bold my-4">Create your own jigsaw!</h1>
-  <form class="">
-    <input type="file" id="img" name="img" class="hidden" accept="image/*" bind:this={imgInput} on:change={(e) => {
-      // @ts-ignore
-      let file = e.target.form[0].files[0]
-      if(file){
-        jigsawSrc = URL.createObjectURL(file)
-      }
-    }}>
-  </form>
-  <div class="flex items-center justify-center w-full flex-col sm:flex-row flex-wrap">
-    <button on:click|preventDefault={() => {imgInput.click()}}>Select image</button>
-    <p>or</p>
-    <button on:click = {async () => ({url:jigsawSrc} = await fetchImage())}>Solve random image</button>
-  </div>
+{#if !gameStarted}
+	<main class="container mx-auto flex items-center content-center flex-col">
+		<h1 class="text-3xl font-bold my-4">Create your own jigsaw!</h1>
+		<form class="">
+			<input
+				type="file"
+				id="img"
+				name="img"
+				class="hidden"
+				accept="image/*"
+				bind:this={imgInput}
+				on:change={(e) => {
+					// @ts-ignore
+					let file = e.target.form[0].files[0];
+					if (file) {
+						jigsawSrc = URL.createObjectURL(file);
+					}
+				}}
+			/>
+		</form>
+		<div class="flex items-center justify-center w-full flex-col sm:flex-row flex-wrap">
+			<button
+				on:click|preventDefault={() => {
+					imgInput.click();
+				}}>Select image</button
+			>
+			<p>or</p>
+			<button on:click={async () => ({ url: jigsawSrc } = await fetchImage())}
+				>Solve random image</button
+			>
+		</div>
 
+		{#if jigsawSrc}
+			<img src={jigsawSrc} alt="puzzle preview" width="700px" />
+		{/if}
 
-  {#if (jigsawSrc)}
-    <img src={jigsawSrc} alt="puzzle preview" width="700px">
-  {/if}
+		<select bind:value={selected} on:click={setLevel}>
+			{#each options as option}
+				<option value={option}>{option}</option>
+			{/each}
+		</select>
 
-  <select bind:value={selected} on:click={setLevel}>
-    {#each options as option}
-      <option value={option}>{option}</option>
-    {/each}
-  </select>
+		{#if selected === 'Easy'}
+			<p>Selected Easy ({num_rows_value} x {num_rows_value})</p>
+		{:else if selected === 'Medium'}
+			<p>Selected Medium ({num_rows_value} x {num_rows_value})</p>
+		{:else if selected === 'Hard'}
+			<p>Selected Hard ({num_rows_value} x {num_rows_value})</p>
+		{/if}
 
-  {#if selected === 'Easy'}
-    <p>Selected Easy ({num_rows_value} x {num_rows_value})</p>
-  {:else if selected === 'Medium'}
-    <p>Selected Medium ({num_rows_value} x {num_rows_value})</p>
-  {:else if selected === 'Hard'}
-    <p>Selected Hard ({num_rows_value} x {num_rows_value})</p>
-  {/if}
-
-  <div class="flex gap-2 cursor-pointer">
-    <input on:click={toggleBackground} type="checkbox" checked id="switch" class="" />
-    <label for="switch" class="cursor-pointer">
-      <p>Background image</p>
-    </label>
-  </div>
-
-  <button on:click={() => {if(gameStarted) resetGame(); else startGame()}}>New Game</button>
-</main>
+		<button
+			on:click={() => {
+				if (gameStarted) resetGame();
+				else startGame();
+			}}>New Game</button
+		>
+	</main>
 {/if}
 
 <!-- an image for the jigsaw canvas -->
-<img src={jigsawSrc} bind:this={JigsawImg} class="hidden" alt="" aria-hidden="true" width="0">
+<img src={jigsawSrc} bind:this={JigsawImg} class="hidden" alt="" aria-hidden="true" width="0" />
 
-{#if (gameStarted)}
-<Jigsaw img={JigsawImg}/>
+{#if gameStarted}
+	<Jigsaw img={JigsawImg} />
 
-<GameMenu>
-  <img src={jigsawSrc} alt="solved jigsaw">
-  <div class="background-image-checkbox-wrapper">
-    <input on:click={toggleBackground} type="checkbox" checked id="switch" class="checkbox" />
-    <label for="switch" class="toggle">
-      <p>Background image</p>
-    </label>
-  </div>
+	<GameMenu>
+		<img src={jigsawSrc} alt="solved jigsaw" />
+		<div class="flex gap-2 cursor-pointer">
+			<input on:click={toggleBackground} type="checkbox" checked id="switch" class="checkbox" />
+			<label for="switch" class="toggle">
+				<p>Background image</p>
+			</label>
+		</div>
 
-  <button on:click={() => {if(gameStarted) resetGame(); else startGame()}}>New Game</button>
-</GameMenu>
+		<button
+			on:click={() => {
+				if (gameStarted) resetGame();
+				else startGame();
+			}}>New Game</button
+		>
+	</GameMenu>
 {/if}
 
 {#if $gameEnded}
-    <Modal on:close={resetGame}>
-        <h2>Puzzle solved!</h2>
-        <p class="modal-text">Your time: {getReadableTime(new Date() - $timer)}</p>
-    </Modal>
+	<Modal on:close={resetGame}>
+		<h2>Puzzle solved!</h2>
+		<p class="modal-text">Your time: {getReadableTime(new Date() - $timer)}</p>
+	</Modal>
 {/if}
 
 <style>
- /* main {
+	/* main {
   margin-bottom: 2rem;
  } */
 
-  .modal-text {
-      font-size: 1.5rem;
-      margin-top: 2rem;
-  }
+	.modal-text {
+		font-size: 1.5rem;
+		margin-top: 2rem;
+	}
 
-  img {
-    width: 100%;
-    max-width: 32rem;
-  }
+	img {
+		width: 100%;
+		max-width: 32rem;
+	}
 </style>
