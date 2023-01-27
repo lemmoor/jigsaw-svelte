@@ -58,8 +58,8 @@
 </script>
 
 {#if !gameStarted}
-	<main class="container mx-auto flex items-center content-center flex-col">
-		<h1 class="text-3xl font-bold my-4">Create your own jigsaw!</h1>
+	<main class="container mx-auto flex flex-col content-center items-center">
+		<h1 class="my-4 text-3xl font-bold">Create your own jigsaw!</h1>
 		<form class="">
 			<input
 				type="file"
@@ -77,7 +77,7 @@
 				}}
 			/>
 		</form>
-		<div class="flex items-center justify-center w-full flex-col sm:flex-row flex-wrap">
+		<div class="flex w-full flex-col flex-wrap items-center justify-center sm:flex-row">
 			<button
 				on:click|preventDefault={() => {
 					imgInput.click();
@@ -124,7 +124,7 @@
 
 	<GameMenu>
 		<img src={jigsawSrc} alt="solved jigsaw" />
-		<div class="flex gap-2 cursor-pointer">
+		<div class="flex cursor-pointer gap-2">
 			<input on:click={toggleBackground} type="checkbox" checked id="switch" class="checkbox" />
 			<label for="switch" class="toggle">
 				<p>Background image</p>

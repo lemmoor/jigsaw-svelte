@@ -1,7 +1,6 @@
 <script>
-	import { slide, fade } from 'svelte/transition';
+	import { slide } from 'svelte/transition';
 	let isOpen = false;
-	let outro = false;
 	function toggleMenu() {
 		isOpen = !isOpen;
 	}
