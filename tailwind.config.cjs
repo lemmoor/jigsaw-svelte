@@ -1,11 +1,15 @@
 const config = {
-  content: ["./src/**/*.{html,js,svelte,ts}", "./index.html"],
+  darkMode: 'class',
+  content: ["./src/**/*.{html,js,svelte,ts}", "./index.html", require('path').join(require.resolve('@skeletonlabs/skeleton'), '../**/*.{html,js,svelte,ts}')],
+  
 
   theme: {
     extend: {},
   },
 
-  plugins: [],
+  plugins: [
+    require('@skeletonlabs/skeleton/tailwind/skeleton.cjs')
+  ],
 };
 
 module.exports = config;
