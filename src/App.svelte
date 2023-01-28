@@ -58,61 +58,68 @@
 </script>
 
 {#if !gameStarted}
-	<main class="container mx-auto flex flex-col content-center items-center">
-		<h1 class="my-4 text-3xl font-bold">Create your own jigsaw!</h1>
-		<form class="">
-			<input
-				type="file"
-				id="img"
-				name="img"
-				class="hidden"
-				accept="image/*"
-				bind:this={imgInput}
-				on:change={(e) => {
-					// @ts-ignore
-					let file = e.target.form[0].files[0];
-					if (file) {
-						jigsawSrc = URL.createObjectURL(file);
-					}
-				}}
-			/>
-		</form>
-		<div class="flex w-full flex-col flex-wrap items-center justify-center sm:flex-row">
-			<button
-				on:click|preventDefault={() => {
-					imgInput.click();
-				}}>Select image</button
+	<main
+		class="container mx-auto flex min-h-[30rem] max-w-lg shrink-0 gap-8 rounded-lg bg-surface-50 p-8 dark:bg-surface-800"
+	>
+		<!-- <h1 class="my-4 text-3xl font-bold">Create your own jigsaw!</h1> -->
+		<div class="min-w-full">
+			<form class="">
+				<input
+					type="file"
+					id="img"
+					name="img"
+					class="hidden"
+					accept="image/*"
+					bind:this={imgInput}
+					on:change={(e) => {
+						// @ts-ignore
+						let file = e.target.form[0].files[0];
+						if (file) {
+							jigsawSrc = URL.createObjectURL(file);
+						}
+					}}
+				/>
+			</form>
+			<div
+				class="mb-6 flex w-full min-w-full flex-col flex-wrap items-center justify-center sm:flex-row"
 			>
-			<p>or</p>
-			<button on:click={async () => ({ url: jigsawSrc } = await fetchImage())}
-				>Solve random image</button
-			>
+				<button
+					class="btn btn-base min-w-[12rem] bg-primary-500 text-white"
+					on:click|preventDefault={() => {
+						imgInput.click();
+					}}>Select image</button
+				>
+				<p class="mx-3">OR</p>
+				<button
+					on:click={async () => ({ url: jigsawSrc } = await fetchImage())}
+					class="btn btn-base min-w-[12rem] bg-primary-500 text-white">Solve random image</button
+				>
+			</div>
+			{#if jigsawSrc}
+				<img src={jigsawSrc} alt="puzzle preview" class=" mx-auto w-full max-w-xs" />
+			{/if}
 		</div>
 
-		{#if jigsawSrc}
-			<img src={jigsawSrc} alt="puzzle preview" width="700px" />
-		{/if}
-
-		<select bind:value={selected} on:click={setLevel}>
-			{#each options as option}
-				<option value={option}>{option}</option>
-			{/each}
-		</select>
-
-		{#if selected === 'Easy'}
-			<p>Selected Easy ({num_rows_value} x {num_rows_value})</p>
-		{:else if selected === 'Medium'}
-			<p>Selected Medium ({num_rows_value} x {num_rows_value})</p>
-		{:else if selected === 'Hard'}
-			<p>Selected Hard ({num_rows_value} x {num_rows_value})</p>
-		{/if}
-
-		<button
-			on:click={() => {
-				if (gameStarted) resetGame();
-				else startGame();
-			}}>New Game</button
-		>
+		<div class="min-w-full">
+			<select bind:value={selected} on:click={setLevel}>
+				{#each options as option}
+					<option value={option}>{option}</option>
+				{/each}
+			</select>
+			{#if selected === 'Easy'}
+				<p>Selected Easy ({num_rows_value} x {num_rows_value})</p>
+			{:else if selected === 'Medium'}
+				<p>Selected Medium ({num_rows_value} x {num_rows_value})</p>
+			{:else if selected === 'Hard'}
+				<p>Selected Hard ({num_rows_value} x {num_rows_value})</p>
+			{/if}
+			<button
+				on:click={() => {
+					if (gameStarted) resetGame();
+					else startGame();
+				}}>New Game</button
+			>
+		</div>
 	</main>
 {/if}
 
@@ -157,8 +164,8 @@
 		margin-top: 2rem;
 	}
 
-	img {
+	/* img {
 		width: 100%;
 		max-width: 32rem;
-	}
+	} */
 </style>
