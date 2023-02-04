@@ -3,6 +3,7 @@
 	import Jigsaw from './lib/Jigsaw.svelte';
 	import Modal from './lib/Modal.svelte';
 	import GameMenu from './lib/GameMenu.svelte';
+	import { ArrowRightIcon, ArrowLeftIcon } from 'svelte-feather-icons';
 	import { num_rows, bg_alpha, gameEnded, timer } from './lib/stores.js';
 	import { getReadableTime, fetchImage } from './utils';
 
@@ -55,14 +56,23 @@
 			bg_alpha.update((n) => 0.4);
 		}
 	}
+
+	let isNextPage = false;
+	function movePage() {
+		isNextPage = !isNextPage;
+	}
 </script>
 
 {#if !gameStarted}
 	<main
-		class="container mx-auto flex min-h-[30rem] max-w-lg shrink-0 gap-8 rounded-lg bg-surface-50 p-8 dark:bg-surface-800"
+		class=" mx-auto flex min-h-[30rem] max-w-lg shrink-0 gap-8 overflow-hidden rounded-lg bg-surface-50 p-8 dark:bg-surface-800"
 	>
 		<!-- <h1 class="my-4 text-3xl font-bold">Create your own jigsaw!</h1> -->
-		<div class="min-w-full">
+		<div
+			class={`relative min-w-full transition-transform ${
+				isNextPage ? 'translate-x-[calc(-100%-2rem)]' : 'translate-x-0'
+			}`}
+		>
 			<form class="">
 				<input
 					type="file"
@@ -84,28 +94,40 @@
 				class="mb-6 flex w-full min-w-full flex-col flex-wrap items-center justify-center sm:flex-row"
 			>
 				<button
-					class="btn btn-base min-w-[12rem] bg-primary-500 text-white"
+					class="btn btn-base btn-filled-primary min-w-[12rem]"
 					on:click|preventDefault={() => {
 						imgInput.click();
-					}}>Select image</button
-				>
+					}}
+					>Select image
+				</button>
 				<p class="mx-3">OR</p>
 				<button
 					on:click={async () => ({ url: jigsawSrc } = await fetchImage())}
-					class="btn btn-base min-w-[12rem] bg-primary-500 text-white">Solve random image</button
-				>
+					class="btn btn-base btn-filled-primary min-w-[12rem]"
+					>Solve random image
+				</button>
 			</div>
 			{#if jigsawSrc}
 				<img src={jigsawSrc} alt="puzzle preview" class=" mx-auto w-full max-w-xs" />
 			{/if}
+			<button class="btn absolute bottom-0 right-0 p-0" on:click={movePage}>
+				<ArrowRightIcon size="34" class="cursor-pointer text-token" />
+			</button>
 		</div>
 
-		<div class="min-w-full">
-			<select bind:value={selected} on:click={setLevel}>
-				{#each options as option}
-					<option value={option}>{option}</option>
-				{/each}
-			</select>
+		<div
+			class={`relative min-w-full transition-transform ${
+				isNextPage ? 'translate-x-[calc(-100%-2rem)]' : 'translate-x-0'
+			}`}
+		>
+			<label class="mb-2">
+				<span>Select difficulty:</span>
+				<select bind:value={selected} on:click={setLevel} class="cursor-pointer p-1">
+					{#each options as option}
+						<option value={option}>{option}</option>
+					{/each}
+				</select>
+			</label>
 			{#if selected === 'Easy'}
 				<p>Selected Easy ({num_rows_value} x {num_rows_value})</p>
 			{:else if selected === 'Medium'}
@@ -114,11 +136,16 @@
 				<p>Selected Hard ({num_rows_value} x {num_rows_value})</p>
 			{/if}
 			<button
+				class="btn btn-base btn-filled-primary mt-8 w-full"
 				on:click={() => {
 					if (gameStarted) resetGame();
 					else startGame();
-				}}>New Game</button
-			>
+				}}
+				>New Game
+			</button>
+			<button class="btn absolute bottom-0 left-0 p-0" on:click={movePage}>
+				<ArrowLeftIcon size="34" class="cursor-pointer text-token" />
+			</button>
 		</div>
 	</main>
 {/if}
@@ -150,22 +177,13 @@
 {#if $gameEnded}
 	<Modal on:close={resetGame}>
 		<h2>Puzzle solved!</h2>
-		<p class="modal-text">Your time: {getReadableTime(new Date() - $timer)}</p>
+		<p class="text-sm font-bold md:text-2xl">Your time: {getReadableTime(new Date() - $timer)}</p>
 	</Modal>
 {/if}
 
 <style>
-	/* main {
-  margin-bottom: 2rem;
- } */
-
 	.modal-text {
 		font-size: 1.5rem;
 		margin-top: 2rem;
 	}
-
-	/* img {
-		width: 100%;
-		max-width: 32rem;
-	} */
 </style>
