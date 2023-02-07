@@ -1,3 +1,5 @@
+const defaultTheme = require('tailwindcss/defaultTheme')
+
 const config = {
 	darkMode: 'class',
 	content: [
@@ -7,7 +9,10 @@ const config = {
 	],
 
 	theme: {
-		extend: {}
+		screens: {
+			xs: '475px',
+			...defaultTheme.screens
+		}
 	},
 
 	plugins: [require('@skeletonlabs/skeleton/tailwind/skeleton.cjs')]

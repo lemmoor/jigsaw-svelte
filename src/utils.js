@@ -14,6 +14,6 @@ export const getReadableTime = (time) => {
 export const fetchImage = async () => {
 	let imageID = Math.floor(Math.random() * 1000);
 	const response = await fetch(`https://picsum.photos/id/${imageID}/1200`);
-	console.log(response);
+	if (response.status == 404) console.log('error fetching image');
 	return { imageID, url: response.url };
 };

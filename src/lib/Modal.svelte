@@ -6,47 +6,16 @@
 	const close = () => dispatch('close');
 </script>
 
-<div class="modal" in:scale out:fade>
+<div
+	class="fixed top-1/2 left-1/2 flex min-h-screen w-full -translate-x-1/2 -translate-y-1/2 
+		flex-col items-center gap-4 bg-surface-50 p-8 shadow-xl text-token dark:bg-surface-800 
+		xs:min-h-[30rem] xs:max-w-[30rem] xs:rounded-lg"
+	in:scale
+	out:fade
+>
 	<!-- ✕ -->
-	<span on:click={close}>&#10005;</span>
-	<div class="modal-content">
+	<span on:click={close} class="btn cursor-pointer self-end p-0 text-2xl font-bold">&#10005;</span>
+	<div class="grid place-items-center gap-3">
 		<slot />
 	</div>
 </div>
-
-<style>
-	span {
-		cursor: pointer;
-		font-weight: bold;
-		font-size: 2rem;
-		align-self: flex-end;
-	}
-
-	.modal {
-		position: fixed;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		background-color: #ffffff;
-		width: 100%;
-		max-width: 40rem;
-		min-height: 35rem;
-		padding: 2rem;
-		/* margin: 1rem; */
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 1rem;
-
-		box-shadow: 0px 0px 25px -9px rgba(66, 68, 90, 1);
-	}
-
-	.modal-content {
-		display: grid;
-		place-items: center;
-		place-content: center;
-		min-height: 20rem;
-		width: 100%;
-		font-size: 2.5rem;
-	}
-</style>
