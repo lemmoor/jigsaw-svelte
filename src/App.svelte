@@ -19,7 +19,9 @@
 </script>
 
 {#if !$gameStarted}
-	<MainMenu bind:jigsawSrc />
+	<div class="grid min-h-screen place-content-center">
+		<MainMenu bind:jigsawSrc />
+	</div>
 {/if}
 
 <!-- an image for the jigsaw canvas -->

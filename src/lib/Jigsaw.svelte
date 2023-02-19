@@ -224,10 +224,10 @@
 <Canvas
 	width={canvasWidth}
 	height={canvasHeight}
-	style="margin: 0 auto; touch-action: none;border: 1px solid black; cursor: {cursorStyle};"
+	style="margin: 0 auto; touch-action: none; cursor: {cursorStyle};"
 	bind:this={canv}
 	on:mousedown={(e) => {
-        handleMousedown(e.offsetX, e.offsetY);
+		handleMousedown(e.offsetX, e.offsetY);
 	}}
 	on:mousemove={(e) => {
 		handleMousemove(e.offsetX, e.offsetY);
