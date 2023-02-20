@@ -114,7 +114,7 @@
 	>
 		<label class="mb-2">
 			<span>Select difficulty:</span>
-			<select bind:value={selected} on:click={setLevel} class="cursor-pointer p-1">
+			<select bind:value={selected} on:change={setLevel} class="cursor-pointer p-1">
 				{#each options as option}
 					<option value={option}>{option}</option>
 				{/each}

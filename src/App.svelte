@@ -45,7 +45,7 @@
 		<p class="text-sm font-semibold md:text-2xl">
 			Your time: {getReadableTime(new Date() - $timer)}
 		</p>
-		<button on:click={resetGame} class="btn btn-base btn-filled-primary w-full self-end">
+		<button on:click={resetGame} class="btn btn-base btn-filled-primary mb-4 w-full self-end">
 			New Game
 		</button>
 	</Modal>
