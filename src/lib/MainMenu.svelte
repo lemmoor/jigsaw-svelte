@@ -5,7 +5,8 @@
 
 	export let jigsawSrc;
 	let imgInput;
-	// let gameStarted = false;
+	let imgLoading = false;
+	let imgLoadingError = false;
 
 	const options = ['Easy', 'Medium', 'Hard', 'debug'];
 	let selected = options[0];
@@ -75,8 +76,19 @@
 			</button>
 			<p>OR</p>
 			<button
-				on:click={async () => ({ url: jigsawSrc } = await fetchImage())}
 				class="btn btn-base btn-filled-primary min-w-[12rem]"
+				on:click={async () => {
+					imgLoading = true;
+					imgLoadingError = false;
+					jigsawSrc = null;
+
+					try {
+						jigsawSrc = (await fetchImage()).url;
+					} catch (err) {
+						imgLoadingError = true;
+					}
+					imgLoading = false;
+				}}
 			>
 				Solve random image
 			</button>
@@ -84,7 +96,13 @@
 		{#if jigsawSrc}
 			<img src={jigsawSrc} alt="puzzle preview" class="mx-auto w-full max-w-xs" />
 		{/if}
-		<button class="btn absolute bottom-0 right-0 p-0" on:click={movePage}>
+		{#if imgLoadingError}
+			<p class="text-center">Couldn't find an image. Try again.</p>
+		{/if}
+		{#if imgLoading}
+			<p class="text-center">Loading...</p>
+		{/if}
+		<button class="btn absolute bottom-0 right-0 p-0" on:click={movePage} disabled={!jigsawSrc}>
 			<ArrowRightIcon size="34" class="cursor-pointer text-token" />
 		</button>
 	</div>

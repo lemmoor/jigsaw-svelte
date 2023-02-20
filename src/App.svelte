@@ -40,10 +40,13 @@
 {/if}
 
 {#if $gameEnded}
-	<Modal on:close={resetGame}>
+	<Modal on:close={() => ($gameEnded = false)}>
 		<p class="!text-xl">Puzzle solved!</p>
 		<p class="text-sm font-semibold md:text-2xl">
 			Your time: {getReadableTime(new Date() - $timer)}
 		</p>
+		<button on:click={resetGame} class="btn btn-base btn-filled-primary w-full self-end">
+			New Game
+		</button>
 	</Modal>
 {/if}
